@@ -1,6 +1,6 @@
 ---
-title: "My title"
-subtitle: "My subtitle if needed"
+title: "Toronto Homicides and Shootings (To be Changed)"
+subtitle: "An analysis of police presence across Toronto neighbourhoods in relation to homicide and shooting cases (2018-2023)"
 author: Emily Su
 thanks: "Code and data are available at: https://github.com/moonsdust/toronto-homicides-shootings."
 date: today
