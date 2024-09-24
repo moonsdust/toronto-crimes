@@ -1,6 +1,6 @@
 #### Preamble ####
 # Purpose: Cleans the unedited ward profile data, unedited police location
-# data, and unedited data on neighbourhood crime rates. 
+# data, and unedited data on neighbourhood crime rates.
 # Author: Emily Su
 # Date: 21 September 2024
 # Contact: em.su@mail.utoronto.ca
@@ -31,8 +31,8 @@ raw_neighbourhood_data <-
 cleaned_ward_data <- raw_ward_profiles_data |> clean_names()
 
 # Get row that contains the average household income
-cleaned_ward_data <- 
-  cleaned_ward_data |> 
+cleaned_ward_data <-
+  cleaned_ward_data |>
   filter(x2021_one_variable_city_of_toronto_profiles == 
            "Average total income of households in 2020 ($)")
 # Convert row to a column 
