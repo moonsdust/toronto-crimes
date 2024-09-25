@@ -436,7 +436,26 @@ Code written in the scripts was checked and styled with lintr [@citelintr] and s
 
 ## Additional Figures 
 
+
 ## Additional Tables 
+```{r}
+#| label: tbl-wardprofile
+#| tbl-cap:  Average total income of households in 2020 across the 25 wards of Toronto.
+#| echo: false
+#| warning: false
+#| message: false
+
+# Creates table
+cleaned_ward_data |>
+  rename(
+    "Ward Number" = ward_num,
+    "Ward Name" = ward_name,
+    "Average total income of households in 2020 ($)" = avg_income
+  ) |>
+  kable()
+```
+
+
 
 \newpage
 
