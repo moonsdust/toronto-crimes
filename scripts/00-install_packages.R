@@ -17,3 +17,4 @@ install.packages("dplyr")
 install.packages("ggplot2") # To make graphs
 install.packages("lintr") # To check styling of code
 install.packages("styler") # To style code
+install.packages("geojsonsf") # To convert from GeoJSON to sf object
