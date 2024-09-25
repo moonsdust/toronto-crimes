@@ -4,7 +4,7 @@
 
 
 ## Important Notes
-- Due to the formatting of the `geometry` columns for the "Police Facility Location", "Neighbourhood Crime Rates", and "Neighbourhoods" datasets, they were downloaded as geojson files instead of CSV files. 
+- Due to the formatting of the `geometry` columns for the "Police Facility Location" and "Neighbourhood Crime Rates" datasets, they were downloaded as geojson files instead of CSV files. 
 
 ## File Structure
 

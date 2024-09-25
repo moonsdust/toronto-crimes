@@ -24,14 +24,10 @@ raw_crime_rates_data <-
   geojson_sf("data/raw_data/raw_crime_rates.geojson")
 raw_police_location_data <-
   geojson_sf("data/raw_data/raw_police_location.geojson")
-raw_neighbourhood_data <-
-  geojson_sf("data/raw_data/raw_neighbourhood.geojson")
 # raw_crime_rates_data <-
 #   read_csv("data/raw_data/raw_crime_rates.csv", show_col_types = FALSE)
 #raw_police_location_data <-
 #  read_csv("data/raw_data/raw_police_location.csv", show_col_types = FALSE)
-#raw_neighbourhood_data <-
-#  read_csv("data/raw_data/raw_neighbourhood.csv", show_col_types = FALSE)
 
 # Dataset 1 (Ward Profiles Dataset)
 # Expected columns: ward_num | ward_name | avg_income
@@ -210,15 +206,6 @@ cleaned_police_location <- raw_police_location_data |> clean_names()
 cleaned_police_location <-
   cleaned_police_location |> select(facility, geometry)
 
-# Dataset 4
-# Expected Columns: area_short_code | area_name | geometry
-# Clean column names 
-cleaned_neighbourhood_data <- raw_neighbourhood_data |> clean_names()
-
-# Select expected columns 
-cleaned_neighbourhood_data <-
-  cleaned_neighbourhood_data |> select(area_short_code, area_name, geometry)
-
 #### Save data ####
 # Save crime data as a geojson
 write_sf(cleaned_crime_data, "data/analysis_data/cleaned_crime_data.geojson")
@@ -227,9 +214,6 @@ write_csv(cleaned_ward_data, "data/analysis_data/cleaned_ward_data.csv")
 # Save police location data as a geojson
 write_sf(cleaned_police_location,
           "data/analysis_data/cleaned_police_location.geojson")
-# Save neighbourhood data as a geojson
-write_sf(cleaned_neighbourhood_data,
-          "data/analysis_data/cleaned_neighbourhood.geojson")
 # # Save crime data as a CSV
 # write_csv(cleaned_crime_data, "data/analysis_data/cleaned_crime_data.csv")
 # # Save ward profile data as a CSV
@@ -237,6 +221,3 @@ write_sf(cleaned_neighbourhood_data,
 # # Save police location data as a CSV
 # write_csv(cleaned_police_location,
 #           "data/analysis_data/cleaned_police_location.csv")
-# # Save neighbourhood data as a CSV
-# write_csv(cleaned_neighbourhood_data,
-#           "data/analysis_data/cleaned_neighbourhood.csv")
