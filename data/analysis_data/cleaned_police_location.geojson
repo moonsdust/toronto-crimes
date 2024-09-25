@@ -1,0 +1,33 @@
+{
+"type": "FeatureCollection",
+"name": "cleaned_police_location",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "facility": "11 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.46082833183209, 43.671079704101999 ] } },
+{ "type": "Feature", "properties": { "facility": "12 Division " }, "geometry": { "type": "Point", "coordinates": [ -79.486875808172499, 43.694579142092799 ] } },
+{ "type": "Feature", "properties": { "facility": "13 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.436683017408996, 43.698327247001203 ] } },
+{ "type": "Feature", "properties": { "facility": "14 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.425981200993405, 43.6513054941584 ] } },
+{ "type": "Feature", "properties": { "facility": "22 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.52918455534649, 43.643106897093098 ] } },
+{ "type": "Feature", "properties": { "facility": "23 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.583521688336603, 43.743866057459101 ] } },
+{ "type": "Feature", "properties": { "facility": "31 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.527474282482302, 43.756750469252097 ] } },
+{ "type": "Feature", "properties": { "facility": "32 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.415087186730602, 43.771728204934597 ] } },
+{ "type": "Feature", "properties": { "facility": "33 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.350068663118606, 43.751081642194599 ] } },
+{ "type": "Feature", "properties": { "facility": "41 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.277110452992503, 43.730805496861301 ] } },
+{ "type": "Feature", "properties": { "facility": "42 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.240012106044702, 43.789373894863601 ] } },
+{ "type": "Feature", "properties": { "facility": "43 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.174056591293194, 43.770835358518497 ] } },
+{ "type": "Feature", "properties": { "facility": "51 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.362142235594007, 43.651951390118597 ] } },
+{ "type": "Feature", "properties": { "facility": "52 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.389717591620993, 43.654209021290001 ] } },
+{ "type": "Feature", "properties": { "facility": "53 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.400661806520404, 43.706060012978 ] } },
+{ "type": "Feature", "properties": { "facility": "55 Substation" }, "geometry": { "type": "Point", "coordinates": [ -79.309482768007598, 43.7146083755555 ] } },
+{ "type": "Feature", "properties": { "facility": "55 Division" }, "geometry": { "type": "Point", "coordinates": [ -79.317299347674805, 43.669180018166102 ] } },
+{ "type": "Feature", "properties": { "facility": "Traffic Services" }, "geometry": { "type": "Point", "coordinates": [ -79.417224042031506, 43.637631413127103 ] } },
+{ "type": "Feature", "properties": { "facility": "East Collision Reporting Centre" }, "geometry": { "type": "Point", "coordinates": [ -79.288237903150701, 43.749555496681303 ] } },
+{ "type": "Feature", "properties": { "facility": "North Collision Reporting Centre" }, "geometry": { "type": "Point", "coordinates": [ -79.551535209163106, 43.7564091641106 ] } },
+{ "type": "Feature", "properties": { "facility": "Mounted Unit" }, "geometry": { "type": "Point", "coordinates": [ -79.418097802111404, 43.635266615669202 ] } },
+{ "type": "Feature", "properties": { "facility": "Toronto Police College" }, "geometry": { "type": "Point", "coordinates": [ -79.503482378896294, 43.605084207509002 ] } },
+{ "type": "Feature", "properties": { "facility": "Headquarters" }, "geometry": { "type": "Point", "coordinates": [ -79.385142905759594, 43.661357715759898 ] } },
+{ "type": "Feature", "properties": { "facility": "Parking Enforcement East/Property & Evidence Management" }, "geometry": { "type": "Point", "coordinates": [ -79.2685386609148, 43.774173146908701 ] } },
+{ "type": "Feature", "properties": { "facility": "Parking Enforcement West" }, "geometry": { "type": "Point", "coordinates": [ -79.458292365645804, 43.713761023762999 ] } },
+{ "type": "Feature", "properties": { "facility": "Marine Headquarters" }, "geometry": { "type": "Point", "coordinates": [ -79.385874047008897, 43.637869851566698 ] } }
+]
+}
