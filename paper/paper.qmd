@@ -18,7 +18,26 @@ bibliography: references.bib
 #| warning: false
 #| message: false
 
-library(tidyverse)
+library("tidyverse") # Contains data-related packages
+library("knitr") # To make tables
+library("opendatatoronto")
+library("ggplot2") # To make graphs
+library("sf") # To make maps
+library("geojsonsf") # To read geojson files
+```
+
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+# Read in data
+# Police data 
+cleaned_police_location <- geojson_sf('../data/analysis_data/cleaned_police_location.geojson')
+# Crime data
+cleaned_crime_data <- geojson_sf('../data/analysis_data/cleaned_crime_data.geojson')
+# Ward data 
+cleaned_ward_data <- read_csv('../data/analysis_data/cleaned_ward_data.csv', show_col_types = FALSE)
 ```
 
 
@@ -39,7 +58,345 @@ The remainder of this paper is structured as follows. @sec-data....
 
 
 # Results {#sec-results}
-This is the results section
+## Number of Homicide and Shooting Cases in Toronto from 2018 to 2023 in Toronto
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+# Add up total number of cases per neighbourhood
+crime_per_neighbourhood <- 
+  cleaned_crime_data |>
+  # Calculate the total sum of cases across all neighbourhoods 
+  mutate(
+    num_cases_total = sum(num_of_cases)
+  ) |>
+  select(neighbourhood, homicide_or_shooting, num_of_cases, num_cases_total) |>
+  # Groups data by type of crime, and neighbourhood
+  group_by(neighbourhood, homicide_or_shooting) |>
+  # Create new columns for number of cases for homicides and shootings per neighbourhood. Also calculate the proportion as well. 
+  mutate (
+    num_cases_total_per_neighbourhood_per_crime = sum(num_of_cases),
+    num_cases_total_per_neighbourhood_per_crime_proportion = round(num_cases_total_per_neighbourhood_per_crime / num_cases_total, 3)
+  ) |>
+  ungroup() |>
+  group_by(neighbourhood) |> 
+  mutate(
+    num_cases_total_per_neighbourhood = sum(num_of_cases),
+    num_cases_total_per_neighbourhood_proportion = round(num_cases_total_per_neighbourhood / num_cases_total, 3)
+  ) |>
+  # Obtains unique rows
+  unique() |>
+  # Arrange based on the total number of cases per neighbourhood
+  arrange(desc(num_cases_total_per_neighbourhood)) |>
+  tibble() |>
+  select(neighbourhood, homicide_or_shooting, num_of_cases, num_cases_total, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_proportion, num_cases_total_per_neighbourhood_per_crime_proportion) 
+
+
+# Add up total number of cases each year across all neighbourhoods
+yearly_crime <- 
+  cleaned_crime_data |>
+  # Calculate the total sum of cases across all neighbourhoods 
+  mutate(
+    num_cases_total = sum(num_of_cases)
+  ) |>
+  # Group data by year, type of crime, number of total cases, and number of cases
+  select(year, homicide_or_shooting, num_cases_total, num_of_cases) |>
+  group_by(year, homicide_or_shooting) |>
+  unique() |>
+  # Create new columns for number of cases per year for homicides and shootings across ALL neighbourhood. Also calculate the proportion as well. 
+  mutate (
+    yearly_num_cases_total = sum(num_of_cases),
+    yearly_num_cases_total_proportion = round(yearly_num_cases_total / num_cases_total, 3)
+  ) |>
+  tibble() |>
+  select(year, homicide_or_shooting, yearly_num_cases_total, yearly_num_cases_total_proportion) |>
+  unique() |>
+  # Arrange based on the total number of cases per year 
+  arrange(desc(yearly_num_cases_total)) |>
+  ungroup()
+```
+
+```{r}
+#| label: tbl-totalcasestable
+#| fig-cap:  Number of Homicide and Shooting Cases in Toronto from 2018 to 2023
+#| echo: false
+#| warning: false
+#| message: false
+
+# Creates table
+yearly_crime |>
+  select(year, homicide_or_shooting, yearly_num_cases_total, yearly_num_cases_total_proportion) |>
+  # Arrange based on year
+  arrange(year) |>
+  unique() |>
+  rename(
+    "Type of crime" = homicide_or_shooting,
+    "Total number of cases yearly" = yearly_num_cases_total,
+    "Proportion of cases yearly" = yearly_num_cases_total_proportion,
+    "Year" = year
+  ) |>
+  kable()
+```
+
+```{r}
+#| label: fig-totalcaseshistogram
+#| fig-cap:  Number of Homicide and Shooting Cases in Toronto from 2018 to 2023
+#| echo: false
+#| warning: false
+#| message: false
+
+yearly_crime |> 
+  ggplot(mapping = aes(x = year, y = yearly_num_cases_total, fill = homicide_or_shooting)) +
+  geom_bar(stat="identity", position = "dodge2") +
+  labs(x = "Year", y = "Number of Cases", fill = "Type of Crime") +
+  theme_minimal() + 
+  theme(legend.position = "bottom", plot.title = element_text(size = 9, face = "bold"), legend.title = element_text(size = 9), legend.text = element_text(size = 7)) + scale_fill_viridis_d()
+```
+
+```{r}
+#| label: tbl-totalcasesstats
+#| tbl-cap: Minimum, quartiles, median, and maximum of the number of homicides and shootings in Toronto from 2018 to 2023
+#| echo: false # Code will run and its output will show but the code itself will not be included in the doc
+#| warning: false # Warnings are not included 
+#| message: false # Messages are not included 
+
+# Creates table
+yearly_crime |>
+  select(yearly_num_cases_total) |>
+  rename(
+    "Total number of cases" = yearly_num_cases_total
+  ) |>
+  summary() |>
+  kable()
+```
+
+```{r}
+#| label: tbl-totalshootingsstats
+#| tbl-cap: Minimum, quartiles, median, and maximum of the number of shootings in Toronto from 2018 to 2023
+#| echo: false # Code will run and its output will show but the code itself will not be included in the doc
+#| warning: false # Warnings are not included 
+#| message: false # Messages are not included 
+
+# Creates table
+yearly_crime |>
+  filter(homicide_or_shooting == "shooting") |>
+  select(yearly_num_cases_total) |>
+  rename(
+    "Total number of cases" = yearly_num_cases_total
+  ) |>
+  summary() |>
+  kable()
+```
+
+```{r}
+#| label: tbl-totalhomicidesstats
+#| tbl-cap: Minimum, quartiles, median, and maximum of the number of homicides in Toronto from 2018 to 2023
+#| echo: false # Code will run and its output will show but the code itself will not be included in the doc
+#| warning: false # Warnings are not included 
+#| message: false # Messages are not included 
+
+# Creates table
+yearly_crime |>
+  filter(homicide_or_shooting == "homicide") |>
+  select(yearly_num_cases_total) |>
+  rename(
+    "Total number of cases" = yearly_num_cases_total
+  ) |>
+  summary() |>
+  kable()
+```
+
+
+## Six Toronto Neighbourhoods with the Highest Cases of Homicides and Shootings
+
+```{r}
+#| label: tbl-highestcasesshootingstable
+#| fig-cap:  Six Toronto Neighbourhoods with the Highest Cases of Shootings from 2018 to 2023
+#| echo: false
+#| warning: false
+#| message: false
+
+# Creates table
+crime_per_neighbourhood |>
+  filter(homicide_or_shooting == "shooting") |>
+  arrange(desc(num_cases_total_per_neighbourhood_per_crime)) |>
+  select(neighbourhood, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_per_crime_proportion) |>
+  unique() |>
+  rename(
+    "Total number of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime,
+    "Proportion of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime_proportion,
+    "Neighbourhood" = neighbourhood
+  ) |>
+  head(6) |>
+  kable()
+```
+
+
+```{r}
+#| label: tbl-highestcaseshomicidestable
+#| fig-cap:  Six Toronto Neighbourhoods with the Highest Cases of Homicides from 2018 to 2023
+#| echo: false
+#| warning: false
+#| message: false
+
+# Creates table
+crime_per_neighbourhood |>
+  filter(homicide_or_shooting == "homicide") |>
+  arrange(desc(num_cases_total_per_neighbourhood_per_crime)) |>
+  select(neighbourhood, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_per_crime_proportion) |>
+  unique() |>
+  rename(
+    "Total number of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime,
+    "Proportion of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime_proportion,
+    "Neighbourhood" = neighbourhood
+  ) |>
+  head(6) |>
+  kable()
+```
+
+```{r}
+#| label: tbl-highestcasestable
+#| fig-cap:  Six Toronto Neighbourhoods with the Highest Cases of Homicides and Shootings Combined from 2018 to 2023
+#| echo: false
+#| warning: false
+#| message: false
+
+# Creates table
+crime_per_neighbourhood |>
+  filter(homicide_or_shooting == "homicide") |>
+  arrange(desc(num_cases_total_per_neighbourhood)) |>
+  select(neighbourhood, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_proportion) |>
+  unique() |>
+  rename(
+    "Total number of cases (2018 to 2023)" = num_cases_total_per_neighbourhood,
+    "Proportion of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_proportion,
+    "Neighbourhood" = neighbourhood
+  ) |>
+  head(6) |>
+  kable()
+```
+
+
+
+```{r}
+#| label: fig-highestcaseshistogram
+#| fig-cap:  Six Toronto Neighbourhoods with the Highest Cases of Homicides and Shootings from 2018 to 2023
+#| echo: false
+#| warning: false
+#| message: false
+
+crime_per_neighbourhood |> 
+  select(neighbourhood, homicide_or_shooting, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_per_crime) |>
+  arrange(desc(num_cases_total_per_neighbourhood)) |>
+  select(-c(num_cases_total_per_neighbourhood)) |>
+  unique() |>
+  head(12) |>
+  ggplot(mapping = aes(x = neighbourhood, y = num_cases_total_per_neighbourhood_per_crime, fill = homicide_or_shooting)) +
+  geom_bar(stat="identity", position = "dodge2") +
+  labs(x = "Year", y = "Number of Cases", fill = "Type of Crime") +
+  theme_minimal() + 
+  # Reference https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2 to figure out how to rotate text along x axis.
+  theme(legend.position = "bottom", plot.title = element_text(size = 9, face = "bold"), legend.title = element_text(size = 9), legend.text = element_text(size = 7), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  + scale_fill_viridis_d()
+```
+
+
+
+## Police Facility Locations in relation to the Number of Homicides and Shootings from 2018 to 2023 in Toronto
+
+```{r}
+#| label: fig-homicides-map
+#| fig-cap: Location of police facilities in relation to Toronto neighbourhoods with the highest number of homicides from 2018 to 2023.
+#| echo: false
+#| warning: false
+#| message: false
+# Reference the following for code:
+# https://cengel.github.io/R-spatial/mapping.html
+ggplot() + 
+    # To help convert between GeoJSON to sf  https://cran.r-project.org/web/packages/geojsonsf/vignettes/geojson-sf-conversions.html
+  # Fill in area regarding the number of cases 
+  geom_sf(data = cleaned_crime_data |> filter(homicide_or_shooting == "homicide"), aes(fill = num_of_cases, geometry = geometry)) +
+  # Changes the font of the title and removes the x and y axis 
+  # Reference to figured out how to add labels to maps https://tmieno2.github.io/R-as-GIS-for-Economists/create-maps.html
+  theme_minimal() + 
+  labs(
+    x = "Longitude",
+    y = "Latitude",
+    title = "Number of homicides across Toronto neighbourhoods (2018 to 2023)",
+    fill = "Number of cases"
+  ) +
+  geom_sf_text(
+    data = cleaned_crime_data |> filter(num_of_cases >= 14),
+    aes(label = hood_id),
+    check_overlap = TRUE,
+    size = 2, 
+    color = "white"
+    ) +
+    theme(plot.title = element_text(size = 9, face = 'bold'), 
+          plot.subtitle = element_text(size = 9),
+          rect = element_blank(), 
+          axis.text.x = element_blank(), 
+          axis.text.y = element_blank(), 
+          axis.title.x = element_blank(), 
+          axis.title.y = element_blank(), 
+          axis.ticks = element_blank(), 
+          legend.title = element_text(size = 8),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()
+          ) +
+  # Add in police locations
+  geom_point(data = cleaned_police_location,
+    aes(geometry = geometry, color = "Police Facility"), stat = "sf_coordinates"
+  ) + labs(color = "Location")
+  
+```
+
+
+```{r}
+#| label: fig-shootings-map
+#| fig-cap: Location of police facilities in relation to Toronto neighbourhoods with the highest number of shootings from 2018 to 2023.
+#| echo: false
+#| warning: false
+#| message: false
+# Reference the following for code:
+# https://cengel.github.io/R-spatial/mapping.html
+ggplot() + 
+    # To help convert between GeoJSON to sf  https://cran.r-project.org/web/packages/geojsonsf/vignettes/geojson-sf-conversions.html
+  # Fill in area regarding the number of cases 
+  geom_sf(data = cleaned_crime_data |> filter(homicide_or_shooting == "shooting"), aes(fill = num_of_cases, geometry = geometry)) +
+  # Changes the font of the title and removes the x and y axis 
+  # Reference to figured out how to add labels to maps https://tmieno2.github.io/R-as-GIS-for-Economists/create-maps.html
+  theme_minimal() + 
+  labs(
+    x = "Longitude",
+    y = "Latitude",
+    title = "Number of shootings across Toronto neighbourhoods (2018 to 2023)",
+    fill = "Number of cases"
+  ) +
+  geom_sf_text(
+    data = cleaned_crime_data |> filter(num_of_cases >= 14),
+    aes(label = hood_id),
+    check_overlap = TRUE,
+    size = 2, 
+    color = "white"
+    ) +
+    theme(plot.title = element_text(size = 9, face = 'bold'), 
+          plot.subtitle = element_text(size = 9),
+          rect = element_blank(), 
+          axis.text.x = element_blank(), 
+          axis.text.y = element_blank(), 
+          axis.title.x = element_blank(), 
+          axis.title.y = element_blank(), 
+          axis.ticks = element_blank(), 
+          legend.title = element_text(size = 8),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()
+          ) +
+  # Add in police locations
+  geom_point(data = cleaned_police_location,
+    aes(geometry = geometry, color = "Police Facility"), stat = "sf_coordinates"
+  ) + labs(color = "Location")
+  
+```
 
 # Discussion {#sec-discussion}
 
