@@ -25,23 +25,33 @@
 library(opendatatoronto)
 library(tidyverse)
 library(dplyr)
+library(sf)
 
 #### Download data ####
 # Code to download data was adapted from:
 # https://open.toronto.ca/dataset/neighbourhood-crime-rates/
 
+# # Function to download data
+# download_csv <- function(package_num) {
+#   files <- filter(list_package_resources(package_num),
+#                   tolower(format) %in% c("csv"))
+#   return(filter(files, row_number() == 1) %>% get_resource())
+# }
+
 # Function to download data
-download_csv <- function(package_num) {
+# Downloading geojson file due to the formatting of "geometry" column
+download_geojson <- function(package_num) {
   files <- filter(list_package_resources(package_num),
-                  tolower(format) %in% c("csv"))
+                  tolower(format) %in% c("geojson"))
   return(filter(files, row_number() == 1) %>% get_resource())
 }
 
 # Download "Neighbourhood Crime Rates" Dataset
-crime_rates <- download_csv("neighbourhood-crime-rates")
+# crime_rates <- download_csv("neighbourhood-crime-rates")
+crime_rates <- download_geojson("neighbourhood-crime-rates")
 
 # Download "Police Facility Locations" Dataset
-police_location <- download_csv("9aeefa17-27e8-4dd9-b74d-80f7f9eb85ac")
+police_location <- download_geojson("9aeefa17-27e8-4dd9-b74d-80f7f9eb85ac")
 
 # Download "Ward Profiles (25-Ward Model)"
 ward_profiles <-
@@ -49,11 +59,12 @@ ward_profiles <-
          row_number() == 1) |> get_resource()
 
 # Download "Neighbourhood"
-neighbourhood_boundaries <- download_csv("neighbourhoods")
+neighbourhood_boundaries <- download_geojson("neighbourhoods")
 
 #### Save data ####
-write_csv(crime_rates, "data/raw_data/raw_crime_rates.csv")
-write_csv(police_location, "data/raw_data/raw_police_location.csv")
+# write_csv(crime_rates, "data/raw_data/raw_crime_rates.csv")
+write_sf(crime_rates, "data/raw_data/raw_crime_rates.geojson")
+write_sf(police_location, "data/raw_data/raw_police_location.geojson")
 write_csv(as.data.frame(ward_profiles[1]),
           "data/raw_data/raw_ward_profiles.csv")
-write_csv(neighbourhood_boundaries, "data/raw_data/raw_neighbourhood.csv")
+write_sf(neighbourhood_boundaries, "data/raw_data/raw_neighbourhood.geojson")

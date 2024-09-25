@@ -14,16 +14,24 @@
 library(tidyverse)
 library(janitor)
 library(dplyr)
+library(geojsonsf)
+library(sf)
 
 #### Clean data ####
 raw_ward_profiles_data <-
   read_csv("data/raw_data/raw_ward_profiles.csv", show_col_types = FALSE)
 raw_crime_rates_data <-
-  read_csv("data/raw_data/raw_crime_rates.csv", show_col_types = FALSE)
+  geojson_sf("data/raw_data/raw_crime_rates.geojson")
 raw_police_location_data <-
-  read_csv("data/raw_data/raw_police_location.csv", show_col_types = FALSE)
+  geojson_sf("data/raw_data/raw_police_location.geojson")
 raw_neighbourhood_data <-
-  read_csv("data/raw_data/raw_neighbourhood.csv", show_col_types = FALSE)
+  geojson_sf("data/raw_data/raw_neighbourhood.geojson")
+# raw_crime_rates_data <-
+#   read_csv("data/raw_data/raw_crime_rates.csv", show_col_types = FALSE)
+#raw_police_location_data <-
+#  read_csv("data/raw_data/raw_police_location.csv", show_col_types = FALSE)
+#raw_neighbourhood_data <-
+#  read_csv("data/raw_data/raw_neighbourhood.csv", show_col_types = FALSE)
 
 # Dataset 1 (Ward Profiles Dataset)
 # Expected columns: ward_num | ward_name | avg_income
@@ -100,6 +108,21 @@ cleaned_crime_data <-
          homicide_2020, homicide_2021, homicide_2022, homicide_2023, 
          shooting_2018, shooting_2019, shooting_2020, shooting_2021,
          shooting_2022, shooting_2023, geometry)
+
+# Convert all cases columns to numeric 
+cleaned_crime_data$homicide_2018<- as.numeric(cleaned_crime_data$homicide_2018)
+cleaned_crime_data$homicide_2019<- as.numeric(cleaned_crime_data$homicide_2019)
+cleaned_crime_data$homicide_2020 <- as.numeric(cleaned_crime_data$homicide_2020)
+cleaned_crime_data$homicide_2021 <- as.numeric(cleaned_crime_data$homicide_2021)
+cleaned_crime_data$homicide_2022 <- as.numeric(cleaned_crime_data$homicide_2022)
+cleaned_crime_data$homicide_2023 <- as.numeric(cleaned_crime_data$homicide_2023)
+
+cleaned_crime_data$shooting_2018<- as.numeric(cleaned_crime_data$shooting_2018)
+cleaned_crime_data$shooting_2019<- as.numeric(cleaned_crime_data$shooting_2019)
+cleaned_crime_data$shooting_2020 <- as.numeric(cleaned_crime_data$shooting_2020)
+cleaned_crime_data$shooting_2021 <- as.numeric(cleaned_crime_data$shooting_2021)
+cleaned_crime_data$shooting_2022 <- as.numeric(cleaned_crime_data$shooting_2022)
+cleaned_crime_data$shooting_2023 <- as.numeric(cleaned_crime_data$shooting_2023)
 
 # Replace N\A with 0
 # Reference:
@@ -197,13 +220,23 @@ cleaned_neighbourhood_data <-
   cleaned_neighbourhood_data |> select(area_short_code, area_name, geometry)
 
 #### Save data ####
-# Save crime data as a CSV
-write_csv(cleaned_crime_data, "data/analysis_data/cleaned_crime_data.csv")
-# Save ward profile data as a CSV
+# Save crime data as a geojson
+write_sf(cleaned_crime_data, "data/analysis_data/cleaned_crime_data.geojson")
+# Save ward profile data as a csv
 write_csv(cleaned_ward_data, "data/analysis_data/cleaned_ward_data.csv")
-# Save police location data as a CSV
-write_csv(cleaned_police_location,
-          "data/analysis_data/cleaned_police_location.csv")
-# Save neighbourhood data as a CSV
-write_csv(cleaned_neighbourhood_data,
-          "data/analysis_data/cleaned_neighbourhood.csv")
+# Save police location data as a geojson
+write_sf(cleaned_police_location,
+          "data/analysis_data/cleaned_police_location.geojson")
+# Save neighbourhood data as a geojson
+write_sf(cleaned_neighbourhood_data,
+          "data/analysis_data/cleaned_neighbourhood.geojson")
+# # Save crime data as a CSV
+# write_csv(cleaned_crime_data, "data/analysis_data/cleaned_crime_data.csv")
+# # Save ward profile data as a CSV
+# write_csv(cleaned_ward_data, "data/analysis_data/cleaned_ward_data.csv")
+# # Save police location data as a CSV
+# write_csv(cleaned_police_location,
+#           "data/analysis_data/cleaned_police_location.csv")
+# # Save neighbourhood data as a CSV
+# write_csv(cleaned_neighbourhood_data,
+#           "data/analysis_data/cleaned_neighbourhood.csv")
