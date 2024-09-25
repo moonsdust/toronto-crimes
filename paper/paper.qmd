@@ -70,7 +70,7 @@ crime_per_neighbourhood <-
   mutate(
     num_cases_total = sum(num_of_cases)
   ) |>
-  select(neighbourhood, homicide_or_shooting, num_of_cases, num_cases_total) |>
+  select(neighbourhood, hood_id, homicide_or_shooting, num_of_cases, num_cases_total) |>
   # Groups data by type of crime, and neighbourhood
   group_by(neighbourhood, homicide_or_shooting) |>
   # Create new columns for number of cases for homicides and shootings per neighbourhood. Also calculate the proportion as well. 
@@ -89,7 +89,7 @@ crime_per_neighbourhood <-
   # Arrange based on the total number of cases per neighbourhood
   arrange(desc(num_cases_total_per_neighbourhood)) |>
   tibble() |>
-  select(neighbourhood, homicide_or_shooting, num_of_cases, num_cases_total, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_proportion, num_cases_total_per_neighbourhood_per_crime_proportion) 
+  select(neighbourhood, hood_id, homicide_or_shooting, num_of_cases, num_cases_total, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_proportion, num_cases_total_per_neighbourhood_per_crime_proportion) 
 
 
 # Add up total number of cases each year across all neighbourhoods
@@ -118,7 +118,7 @@ yearly_crime <-
 
 ```{r}
 #| label: tbl-totalcasestable
-#| fig-cap:  Number of Homicide and Shooting Cases in Toronto from 2018 to 2023
+#| tbl-cap: Number of Homicide and Shooting Cases in Toronto from 2018 to 2023
 #| echo: false
 #| warning: false
 #| message: false
@@ -140,7 +140,7 @@ yearly_crime |>
 
 ```{r}
 #| label: fig-totalcaseshistogram
-#| fig-cap:  Number of Homicide and Shooting Cases in Toronto from 2018 to 2023
+#| fig-cap: Number of Homicide and Shooting Cases in Toronto from 2018 to 2023
 #| echo: false
 #| warning: false
 #| message: false
@@ -211,7 +211,7 @@ yearly_crime |>
 
 ```{r}
 #| label: tbl-highestcasesshootingstable
-#| fig-cap:  Six Toronto Neighbourhoods with the Highest Cases of Shootings from 2018 to 2023
+#| tbl-cap:  Six Toronto Neighbourhoods with the Highest Cases of Shootings from 2018 to 2023
 #| echo: false
 #| warning: false
 #| message: false
@@ -220,11 +220,12 @@ yearly_crime |>
 crime_per_neighbourhood |>
   filter(homicide_or_shooting == "shooting") |>
   arrange(desc(num_cases_total_per_neighbourhood_per_crime)) |>
-  select(neighbourhood, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_per_crime_proportion) |>
+  select(neighbourhood, hood_id, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_per_crime_proportion) |>
   unique() |>
   rename(
     "Total number of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime,
     "Proportion of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime_proportion,
+    "Neighbourhood ID" = hood_id,
     "Neighbourhood" = neighbourhood
   ) |>
   head(6) |>
@@ -234,7 +235,7 @@ crime_per_neighbourhood |>
 
 ```{r}
 #| label: tbl-highestcaseshomicidestable
-#| fig-cap:  Six Toronto Neighbourhoods with the Highest Cases of Homicides from 2018 to 2023
+#| tbl-cap:  Six Toronto Neighbourhoods with the Highest Cases of Homicides from 2018 to 2023
 #| echo: false
 #| warning: false
 #| message: false
@@ -243,11 +244,12 @@ crime_per_neighbourhood |>
 crime_per_neighbourhood |>
   filter(homicide_or_shooting == "homicide") |>
   arrange(desc(num_cases_total_per_neighbourhood_per_crime)) |>
-  select(neighbourhood, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_per_crime_proportion) |>
+  select(neighbourhood, hood_id, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_per_crime_proportion) |>
   unique() |>
   rename(
     "Total number of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime,
     "Proportion of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime_proportion,
+    "Neighbourhood ID" = hood_id, 
     "Neighbourhood" = neighbourhood
   ) |>
   head(6) |>
@@ -256,7 +258,7 @@ crime_per_neighbourhood |>
 
 ```{r}
 #| label: tbl-highestcasestable
-#| fig-cap:  Six Toronto Neighbourhoods with the Highest Cases of Homicides and Shootings Combined from 2018 to 2023
+#| tbl-cap:  Six Toronto Neighbourhoods with the Highest Cases of Homicides and Shootings Combined from 2018 to 2023
 #| echo: false
 #| warning: false
 #| message: false
@@ -265,11 +267,12 @@ crime_per_neighbourhood |>
 crime_per_neighbourhood |>
   filter(homicide_or_shooting == "homicide") |>
   arrange(desc(num_cases_total_per_neighbourhood)) |>
-  select(neighbourhood, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_proportion) |>
+  select(neighbourhood, hood_id, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_proportion) |>
   unique() |>
   rename(
     "Total number of cases (2018 to 2023)" = num_cases_total_per_neighbourhood,
     "Proportion of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_proportion,
+    "Neighbourhood ID" = hood_id,
     "Neighbourhood" = neighbourhood
   ) |>
   head(6) |>
@@ -286,17 +289,17 @@ crime_per_neighbourhood |>
 #| message: false
 
 crime_per_neighbourhood |> 
-  select(neighbourhood, homicide_or_shooting, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_per_crime) |>
+  select(hood_id, homicide_or_shooting, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_per_crime) |>
   arrange(desc(num_cases_total_per_neighbourhood)) |>
   select(-c(num_cases_total_per_neighbourhood)) |>
   unique() |>
   head(12) |>
-  ggplot(mapping = aes(x = neighbourhood, y = num_cases_total_per_neighbourhood_per_crime, fill = homicide_or_shooting)) +
+  ggplot(mapping = aes(x = as.character(hood_id), y = num_cases_total_per_neighbourhood_per_crime, fill = homicide_or_shooting)) +
   geom_bar(stat="identity", position = "dodge2") +
-  labs(x = "Year", y = "Number of Cases", fill = "Type of Crime") +
+  labs(x = "Neighbourhood ID", y = "Number of Cases", fill = "Type of Crime") +
   theme_minimal() + 
   # Reference https://stackoverflow.com/questions/1330989/rotating-and-spacing-axis-labels-in-ggplot2 to figure out how to rotate text along x axis.
-  theme(legend.position = "bottom", plot.title = element_text(size = 9, face = "bold"), legend.title = element_text(size = 9), legend.text = element_text(size = 7), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  + scale_fill_viridis_d()
+  theme(legend.position = "bottom", plot.title = element_text(size = 9, face = "bold"), legend.title = element_text(size = 9), legend.text = element_text(size = 7))  + scale_fill_viridis_d()
 ```
 
 
@@ -353,7 +356,7 @@ ggplot() +
 
 ```{r}
 #| label: fig-shootings-map
-#| fig-cap: Location of police facilities in relation to Toronto neighbourhoods with the highest number of shootings from 2018 to 2023.
+#| fig-cap: Location of police facilities in relation to six Toronto neighbourhoods with the highest number of shootings from 2018 to 2023.
 #| echo: false
 #| warning: false
 #| message: false
