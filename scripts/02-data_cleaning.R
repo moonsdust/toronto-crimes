@@ -24,10 +24,6 @@ raw_crime_rates_data <-
   geojson_sf("data/raw_data/raw_crime_rates.geojson")
 raw_police_location_data <-
   geojson_sf("data/raw_data/raw_police_location.geojson")
-# raw_crime_rates_data <-
-#   read_csv("data/raw_data/raw_crime_rates.csv", show_col_types = FALSE)
-#raw_police_location_data <-
-#  read_csv("data/raw_data/raw_police_location.csv", show_col_types = FALSE)
 
 # Dataset 1 (Ward Profiles Dataset)
 # Expected columns: ward_num | ward_name | avg_income
@@ -214,10 +210,3 @@ write_csv(cleaned_ward_data, "data/analysis_data/cleaned_ward_data.csv")
 # Save police location data as a geojson
 write_sf(cleaned_police_location,
           "data/analysis_data/cleaned_police_location.geojson")
-# # Save crime data as a CSV
-# write_csv(cleaned_crime_data, "data/analysis_data/cleaned_crime_data.csv")
-# # Save ward profile data as a CSV
-# write_csv(cleaned_ward_data, "data/analysis_data/cleaned_ward_data.csv")
-# # Save police location data as a CSV
-# write_csv(cleaned_police_location,
-#           "data/analysis_data/cleaned_police_location.csv")

@@ -29,13 +29,6 @@ library(sf)
 # Code to download data was adapted from:
 # https://open.toronto.ca/dataset/neighbourhood-crime-rates/
 
-# # Function to download data
-# download_csv <- function(package_num) {
-#   files <- filter(list_package_resources(package_num),
-#                   tolower(format) %in% c("csv"))
-#   return(filter(files, row_number() == 1) %>% get_resource())
-# }
-
 # Function to download data
 # Downloading geojson file due to the formatting of "geometry" column
 download_geojson <- function(package_num) {
