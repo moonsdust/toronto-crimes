@@ -17,7 +17,8 @@ set.seed(646)
 
 # Global variables
 population_of_toronto <- 2930000
-num_of_neighbourhoods <- 174
+num_of_neighbourhood_ids <- 174
+num_of_neighbourhoods <- 158
 
 # Dataset 1: Crime dataset
 # Expected Columns: year | neighbourhood | hood_id | num_shootings
@@ -34,7 +35,7 @@ simulated_dataset_1 <- tibble(
                      replace = FALSE), sep = " "), 6),
   # Generate hood_id
   hood_id =
-    as.numeric(rep(sample(x = 1:num_of_neighbourhoods,
+    as.numeric(rep(sample(x = 1:num_of_neighbourhood_ids,
                           size = num_of_neighbourhoods,
                           replace = FALSE), 6)),
   # Create 6 * num_of_neighbourhoods random values from uniform distribution
@@ -63,6 +64,9 @@ simulated_dataset_1$year |> max() == 2023
 simulated_dataset_1$hood_id |> unique() %in% c(1:174)
 simulated_dataset_1$hood_id |> min() == 1
 simulated_dataset_1$hood_id |> max() == 174
+
+# 2. Check that there are 158 neighbourhoods
+simulated_dataset_1$neighbourhood |> n_distinct() == 158
 
 # 3. "num_shootings" has min greater than or equal to 0
 simulated_dataset_1$num_shootings |> min() >= 0

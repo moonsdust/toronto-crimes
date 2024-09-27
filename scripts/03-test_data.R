@@ -13,6 +13,7 @@
 #### Workspace setup ####
 library(tidyverse)
 library(geojsonsf)
+library(dplyr)
 
 #### Read in data ####
 cleaned_ward_data <-
@@ -34,13 +35,16 @@ cleaned_crime_data$hood_id |> unique() %in% c(1:174)
 cleaned_crime_data$hood_id |> min() == 1
 cleaned_crime_data$hood_id |> max() == 174
 
-# 3. "num_of_cases" has min greater than or equal to 0
+# 3. Check that there are 158 neighbourhoods
+cleaned_crime_data$neighbourhood |> n_distinct() == 158
+
+# 4. "num_of_cases" has min greater than or equal to 0
 cleaned_crime_data$num_of_cases |> min() >= 0
 
-# 4. "population_2023" has min greater than or equal to 0
+# 5. "population_2023" has min greater than or equal to 0
 cleaned_crime_data$population |> min() >= 0
 
-# 5. Check the classes
+# 6. Check the classes
 class(cleaned_crime_data$year) == "numeric"
 class(cleaned_crime_data$num_of_cases) == "numeric"
 class(cleaned_crime_data$hood_id) == "numeric"
