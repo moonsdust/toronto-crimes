@@ -38,7 +38,6 @@ download_geojson <- function(package_num) {
 }
 
 # Download "Neighbourhood Crime Rates" Dataset
-# crime_rates <- download_csv("neighbourhood-crime-rates")
 crime_rates <- download_geojson("neighbourhood-crime-rates")
 
 # Download "Police Facility Locations" Dataset
@@ -50,7 +49,6 @@ ward_profiles <-
          row_number() == 1) |> get_resource()
 
 #### Save data ####
-# write_csv(crime_rates, "data/raw_data/raw_crime_rates.csv")
 write_sf(crime_rates, "data/raw_data/raw_crime_rates.geojson")
 write_sf(police_location, "data/raw_data/raw_police_location.geojson")
 write_csv(as.data.frame(ward_profiles[1]),

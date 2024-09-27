@@ -1,12 +1,12 @@
 #### Preamble ####
 # Purpose: Tests cleaned datasets about crimes, police locations,
-# and ward data. 
+# and ward data.
 # Author: Emily Su
 # Date: 26 September 2024
 # Contact: em.su@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: Have ran 00-install_packages.R, 01-download_data.R,
-# and 02-data_cleaning.R to obtain cleaned datasets. 
+# and 02-data_cleaning.R to obtain cleaned datasets.
 # Any other information needed? -
 # NOTE: This script was checked through lintr for styling
 
@@ -55,9 +55,9 @@ class(cleaned_police_location$facility) == "character"
 # cleaned_ward_data: Data Validation / Tests
 # 1. Check if that are ward numbers from 1 to 25
 cleaned_ward_data$ward_num |> unique() %in% c(1:25)
-# 2. Check that average income is equal to or greater than 0 
+# 2. Check that average income is equal to or greater than 0
 cleaned_ward_data$avg_income |> min() >= 0
-# 3. Check classes 
+# 3. Check classes
 class(cleaned_ward_data$ward_num) == "numeric"
 class(cleaned_ward_data$ward_name) == "character"
 class(cleaned_ward_data$avg_income) == "numeric"
