@@ -202,7 +202,8 @@ cleaned_crime_data <-
   # rename
   rename(
     "neighbourhood" = area_name
-  )
+  ) |>
+  unique()
 
 # Dataset 3
 # Expected Columns: facility | geometry
@@ -211,7 +212,7 @@ cleaned_police_location <- raw_police_location_data |> clean_names()
 
 # Select expected columns
 cleaned_police_location <-
-  cleaned_police_location |> select(facility, geometry)
+  cleaned_police_location |> select(facility, geometry) |> unique()
 
 #### Save data ####
 # Save crime data as a geojson
