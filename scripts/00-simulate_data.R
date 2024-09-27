@@ -17,7 +17,7 @@ set.seed(646)
 
 # Global variables
 population_of_toronto <- 2930000
-num_of_neighbourhoods <- 158
+num_of_neighbourhoods <- 174
 
 # Dataset 1: Crime dataset
 # Expected Columns: year | neighbourhood | hood_id | num_shootings
@@ -59,10 +59,10 @@ simulated_dataset_1 <- tibble(
 simulated_dataset_1$year |> min() == 2018
 simulated_dataset_1$year |> max() == 2023
 
-# 2. Made sure "hood_id" has neighbourhood id that is from 1 to 158
-simulated_dataset_1$hood_id |> unique() %in% c(1:158)
+# 2. Made sure "hood_id" has neighbourhood id that is from 1 to 174
+simulated_dataset_1$hood_id |> unique() %in% c(1:174)
 simulated_dataset_1$hood_id |> min() == 1
-simulated_dataset_1$hood_id |> max() == 158
+simulated_dataset_1$hood_id |> max() == 174
 
 # 3. "num_shootings" has min greater than or equal to 0
 simulated_dataset_1$num_shootings |> min() >= 0
