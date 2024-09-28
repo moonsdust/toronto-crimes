@@ -33,17 +33,14 @@ library("geojsonsf") # To read geojson files
 
 # Read in data
 # Police data 
-cleaned_police_location <- geojson_sf('../data/analysis_data/cleaned_police_location.geojson')
+cleaned_police_location <- geojson_sf('../data/analysis_data/cleaned_police_location.geojson') |> unique()
 # Crime data
-cleaned_crime_data <- geojson_sf('../data/analysis_data/cleaned_crime_data.geojson')
-# Ward data 
-cleaned_ward_data <- read_csv('../data/analysis_data/cleaned_ward_data.csv', show_col_types = FALSE)
+cleaned_crime_data <- geojson_sf('../data/analysis_data/cleaned_crime_data.geojson') |> unique()
 ```
 
 
 # Introduction
 
-You can and should cross-reference sections and sub-sections. We use @citeR and @rohan.
 
 The remainder of this paper is structured as follows. @sec-data....
 
@@ -51,11 +48,52 @@ The remainder of this paper is structured as follows. @sec-data....
 
 # Data {#sec-data}
 ## Methodology
+The three datasets used by the paper were simulated, retrieved, cleaned, analyzed, and tested 
+using the R programming language [@citeR], tidyverse [@citetidyverse], opendatatoronto [@citeopendatatoronto], knitr [@citeknitr], janitor [@citejanitor], dplyr [@citedplyr], ggplot2 [@citeggplot2], GeoJSON [@citegeojsonsf], and sf [@citesf].
 
 ## Data Source and Measurements
+The data used for the analysis comes from the "cleaned_crime_data" and "cleaned_police_location" datasets. The datasets was constructed by calling the opendatatoronto package [@citeopendatatoronto], which accesses and download data from the City of Toronto's Open Data Portal. The latest versions of the datasets was scraped on September 24, 2024 at 10:28 pm EDT. We also removed duplicate observations from the original dataset that comes from reading in GeoJSON files for the datasets. Other datasets we considered scraping includes the "Neighbourhoods" dataset to obtain neighbourhood boundaries for the maps but further testing showed that these boundaries were provided by the "cleaned_crime_data" dataset. 
 
+### Neighbourhood Crime Rates Dataset
+The "cleaned_crime_data" dataset was retrieved from the "Neighbourhood Crime Rates" dataset and the last time the dataset was updated on the Open Data Portal was on January 11, 2024. This dataset comprised of crime data by neighbourhood that included the number of cases of assault, robbery, homicide, shootings, auto theft, break and enter, and theft over. The original dataset was published by the Toronto Police Services collected from 2014 to 2023, inclusive and is updated annually. For the cleaned dataset, we decided to filter for homicides and shootings and focus on the cases from 2018 to 2023, inclusive. The 2023 population projection in the dataset was provided by Environics Analytics where they counted only the residents in the neighbourhood [@citeneighbourhoodcrimerates]. 
+
+Each observation in the dataset represent one of Toronto's 158 neighbourhoods and its shootings and homicides from the years 2018 to 2023, inclusive that was recorded by the Toronto Police Services. There are 1896 unique observations in total in the dataset. 
+
+Looking at @tbl-dataset-crime-preview, year represents the year the number of homicides and shootings takes place in the neighbourhood and num_of_cases and homicide_or_shooting were constructed based on the columns representing homicide and shootings in the original dataset. homicide_or_shooting indicates what the current crime in the neighbourhood the observation is describing and the num_of_cases indicates the number of cases for the crime indicated by homicide_or_shooting. hood_id is a number between 1 to 174 that represents the ID for the neighbourhood with some neighbourhoods having more than 1 ID. The neighbourhood column contains the name of the neighbourhood. 
+
+Not shown in @tbl-dataset-crime-preview, the geometry column contains points to create the neighbourhood area the shooting or homicide takes place in and population_2023 represents the population projection for 2023 obtained from Environics Analytics. Other variables constructed from this dataset that is not shown includes num_cases_total, population_of_toronto, num_cases_total_per_neigh_per_crime, num_cases_total_per_neigh_per_crime_prop, num_cases_total_per_neigh, num_cases_total_per_neigh_prop, prop_of_toronto_pop_in_neigh, yearly_num_cases_total, and yearly_num_cases_total_prop. num_cases_total is the total number of shootings and homicides from 2018 to 2023 while population_of_toronto is the population of Toronto in 2023 obtained from summing up the population_2023 column. num_cases_total_per_neigh_per_crime represents the number of cases for either homicides or shootings in a particular neighbourhood while num_cases_total_per_neigh_per_crime_prop is the proportion of num_cases_total_per_neigh_per_crime in relation to num_cases_total. num_cases_total_per_neigh represents the number of cases total for each neighbourhood with num_cases_total_per_neigh_prop representing the proportion of num_cases_total_per_neigh in relation to num_cases_total. prop_of_toronto_pop_in_neigh is the population of the neighbourhood in relation to the population of Toronto in 2023. yearly_num_cases_total represents the total number of cases for each crime yearly across ALL neighbourhood per year and yearly_num_cases_total_prop is the proportion of yearly_num_cases_total in relation to num_cases_total.
+
+```{r}
+#| label: tbl-dataset-crime-preview
+#| tbl-cap: Preview of dataset on crime rates across Toronto neighbourhoods from 2018 to 2023 provided by Toronto Police Services
+#| echo: false
+#| warning: false
+#| message: false
+
+# Create table displaying data
+cleaned_crime_data |>
+  tibble() |>
+  select(year, num_of_cases, hood_id, homicide_or_shooting, neighbourhood) |>
+  head() |>
+  kable()
+```
+### Police Facility Locations Dataset
+The "cleaned_police_location" dataset was obtained from the "Police Facility Locations" dataset on the Open Data Portal. The last time the dataset was updated on January 20, 2023 and is updated as new locations are added. Each observation in the dataset represents a police facility in Toronto and its respective geographical point that is recorded by Toronto Police Services as new locations open. There are 26 unique observations in the dataset and contains two variables of interest facility and geometry. As seen in @tbl-dataset-police-preview, facility represents the name of the police location while geometry represents a geographical point of the location on a map.  
+
+```{r}
+#| label: tbl-dataset-police-preview
+#| tbl-cap: Preview of dataset on police facility locations provided by Toronto Police Services
+#| echo: false
+#| warning: false
+#| message: false
+
+# Create table displaying data
+cleaned_police_location |>
+  head() |>
+  kable()
+```
 ## Variables of Interest
-
+Our variables of interest from the "cleaned_crime_data" dataset are num_of_cases, homicide_or_shooting, hood_id, neighbourhood, and geometry. The variables constructed based on the dataset that are variables of interest includes num_cases_total, num_cases_total_per_neigh_per_crime, num_cases_total_per_neigh_per_crime_prop, num_cases_total_per_neigh, num_cases_total_per_neigh_prop, prop_of_toronto_pop_in_neigh, yearly_num_cases_total, and yearly_num_cases_total_prop. The variables of interest from the "cleaned_police_location" dataset includes facility and geometry.
 
 # Results {#sec-results}
 ```{r}
@@ -76,23 +114,23 @@ crime_per_neighbourhood <-
   group_by(neighbourhood, homicide_or_shooting) |>
   # Create new columns for number of cases for homicides and shootings per neighbourhood. Also calculate the proportion as well. 
   mutate (
-    num_cases_total_per_neighbourhood_per_crime = sum(num_of_cases),
-    num_cases_total_per_neighbourhood_per_crime_proportion = round(num_cases_total_per_neighbourhood_per_crime / num_cases_total, 2)
+    num_cases_total_per_neigh_per_crime = sum(num_of_cases),
+    num_cases_total_per_neigh_per_crime_prop = round(num_cases_total_per_neigh_per_crime / num_cases_total, 2)
   ) |>
   ungroup() |>
   group_by(neighbourhood) |> 
   mutate(
-    num_cases_total_per_neighbourhood = sum(num_of_cases),
-    num_cases_total_per_neighbourhood_proportion = round(num_cases_total_per_neighbourhood / num_cases_total, 2),
-    proportion_of_toronto_pop_in_neighbourhood = round(population_2023 / population_of_toronto, 2)
+    num_cases_total_per_neigh = sum(num_of_cases),
+    num_cases_total_per_neigh_prop = round(num_cases_total_per_neigh / num_cases_total, 2),
+    prop_of_toronto_pop_in_neigh = round(population_2023 / population_of_toronto, 2)
   ) |>
   ungroup() |>
   # Obtains unique rows
   unique() |>
   # Arrange based on the total number of cases per neighbourhood
-  arrange(desc(num_cases_total_per_neighbourhood)) |>
+  arrange(desc(num_cases_total_per_neigh)) |>
   tibble() |>
-  select(neighbourhood, hood_id, homicide_or_shooting, num_of_cases, num_cases_total, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_proportion, num_cases_total_per_neighbourhood_per_crime_proportion, proportion_of_toronto_pop_in_neighbourhood) 
+  select(neighbourhood, hood_id, homicide_or_shooting, num_of_cases, num_cases_total, num_cases_total_per_neigh, num_cases_total_per_neigh_per_crime, num_cases_total_per_neigh_prop, num_cases_total_per_neigh_per_crime_prop, prop_of_toronto_pop_in_neigh) 
 
 
 # Add up total number of cases each year across all neighbourhoods
@@ -110,10 +148,10 @@ yearly_crime <-
   # Create new columns for number of cases per year for homicides and shootings across ALL neighbourhood. Also calculate the proportion as well. 
   mutate (
     yearly_num_cases_total = sum(num_of_cases),
-    yearly_num_cases_total_proportion = round(yearly_num_cases_total / num_cases_total, 2)
+    yearly_num_cases_total_prop = round(yearly_num_cases_total / num_cases_total, 2)
   ) |>
   tibble() |>
-  select(year, homicide_or_shooting, yearly_num_cases_total, yearly_num_cases_total_proportion) |>
+  select(year, homicide_or_shooting, yearly_num_cases_total, yearly_num_cases_total_prop) |>
   unique() |>
   # Arrange based on the total number of cases per year 
   arrange(desc(yearly_num_cases_total)) |>
@@ -121,7 +159,7 @@ yearly_crime <-
 ```
 ## Number of Homicide and Shooting Cases in Toronto from 2018 to 2023 in Toronto
 
-Looking at @tbl-totalcasestable and @fig-totalcaseshistogram, we can see that the number of shootings across all Toronto neighbourhoods increased from 427 cases in 2018 to 492 cases in 2019. 
+Looking at @tbl-totalcasestable and @fig-totalcaseshistogram, we can see that the number of shootings across all Toronto neighbourhoods increased from 427 cases in 2018 to 492 cases in 2019. In 2020, the number of shootings decreased to 462 and it decreased the following years for 2021 with 409 shootings, for 2022 with 380 shootings, and for 2023 with 342 shootings. For homicides, there were 98 cases in 2018, 79 cases in 2019, and 71 cases in 2020. There was an increase in homicides in 2021 to 85 cases and decreases in homicides in 2022 and 2023 to 71 and 72 cases, respectively.
 ```{r}
 #| label: tbl-totalcasestable
 #| tbl-cap: Number of Homicide and Shooting Cases in Toronto from 2018 to 2023
@@ -131,14 +169,14 @@ Looking at @tbl-totalcasestable and @fig-totalcaseshistogram, we can see that th
 
 # Creates table
 yearly_crime |>
-  select(year, homicide_or_shooting, yearly_num_cases_total, yearly_num_cases_total_proportion) |>
+  select(year, homicide_or_shooting, yearly_num_cases_total, yearly_num_cases_total_prop) |>
   # Arrange based on year
   arrange(year) |>
   unique() |>
   rename(
     "Type of crime" = homicide_or_shooting,
     "Total number of cases yearly" = yearly_num_cases_total,
-    "Proportion of cases yearly" = yearly_num_cases_total_proportion,
+    "Proportion of cases yearly" = yearly_num_cases_total_prop,
     "Year" = year
   ) |>
   kable()
@@ -159,22 +197,7 @@ yearly_crime |>
   theme(legend.position = "bottom", plot.title = element_text(size = 9, face = "bold"), legend.title = element_text(size = 9), legend.text = element_text(size = 7)) + scale_fill_brewer(palette = "Paired")
 ```
 
-```{r}
-#| label: tbl-totalcasesstats
-#| tbl-cap: Minimum, quartiles, median, and maximum of the number of homicides and shootings in Toronto from 2018 to 2023
-#| echo: false # Code will run and its output will show but the code itself will not be included in the doc
-#| warning: false # Warnings are not included 
-#| message: false # Messages are not included 
-
-# Creates table
-yearly_crime |>
-  select(yearly_num_cases_total) |>
-  rename(
-    "Total number of cases" = yearly_num_cases_total
-  ) |>
-  summary() |>
-  kable()
-```
+Across all Toronto neighbourhoods, @tbl-totalshootingsstats shows that the mean total number of shootings is about 419 cases from 2018 to 2023 across all neighbourhoods yearly. The median total number of shootings is about 418 cases from 2018 to 2023 across all neighbourhoods yearly. @tbl-totalhomicidesstats shows that the mean number of homicides annually across all Toronto neighbourhoods from 2018 to 2023 is 79 while the median is 76 cases. 
 
 ```{r}
 #| label: tbl-totalshootingsstats
@@ -212,9 +235,13 @@ yearly_crime |>
   kable()
 ```
 
+## Six Toronto Neighbourhoods with the Highest Cases of Homicides and Shootings from 2018 to 2023
 
-## Six Toronto Neighbourhoods with the Highest Cases of Homicides and Shootings
+@tbl-highestcasesshootingstable shows that Glenfield-Jane Heights has the highest number of shootings from 2018 to 2023 with 133 cases (4% of all shootings and homicides from 2018 to 2023) out of the 6 Toronto neighbourhoods with the highest number of shootings. Following this, Mount Olive-Silverstone-Jamestown has second highest number of shootings with 82 cases (3% of all shootings and homicides from 2018 to 2023). For the rest in descending order, Black Creek has 69 cases (2% of all shootings and homicides), York University Heights has 59 cases (2% of all shootings and homicides), Yorkdale-Glen Park has 58 cases (2% of all shootings and homicides), and Golfdale-Cedarbrae-Woburn has 54 cases (2% of all shootings and homicides). 
 
+@tbl-highestcaseshomicidestable indicates that Moss Park has the highest number of homicides from 2018 to 2023 with 20 cases (1% of all shootings and homicides). Mount Olive-Silverstone-Jamestown is not only in second for the highest number of shootings but also for homicides with 15 cases from 2018 to 2023 (1% of all shootings and homicides). For the other four neighbourhoods, Avondale has 13 cases ($<1%$ of all shootings and homicides), Glenfield-Jane Heights and York University Heights both have 11 cases ($<1%$ of all shootings and homicides), and Eglinton East	has 10 cases ($<1%$ of all shootings and homicides). 
+
+For both @tbl-highestcasesshootingstable and @tbl-highestcaseshomicidestable, the proportion of people living in each of the 12 neighbourhoods are $<1$. 
 ```{r}
 #| label: tbl-highestcasesshootingstable
 #| tbl-cap:  Six Toronto Neighbourhoods with the Highest Cases of Shootings from 2018 to 2023
@@ -225,20 +252,19 @@ yearly_crime |>
 # Creates table
 crime_per_neighbourhood |>
   filter(homicide_or_shooting == "shooting") |>
-  arrange(desc(num_cases_total_per_neighbourhood_per_crime)) |>
-  select(neighbourhood, hood_id, proportion_of_toronto_pop_in_neighbourhood, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_per_crime_proportion) |>
+  arrange(desc(num_cases_total_per_neigh_per_crime)) |>
+  select(neighbourhood, hood_id, prop_of_toronto_pop_in_neigh, num_cases_total_per_neigh_per_crime, num_cases_total_per_neigh_per_crime_prop) |>
   unique() |>
   rename(
-    "Total number of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime,
-    "Proportion of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime_proportion,
+    "Total number of cases (2018 to 2023)" = num_cases_total_per_neigh_per_crime,
+    "Proportion of cases (2018 to 2023)" = num_cases_total_per_neigh_per_crime_prop,
     "Neighbourhood ID" = hood_id,
     "Neighbourhood" = neighbourhood,
-    "Proportion of Population (2023)" = proportion_of_toronto_pop_in_neighbourhood
+    "Proportion of Population (2023)" = prop_of_toronto_pop_in_neigh
   ) |>
   head(6) |>
   kable()
 ```
-
 
 ```{r}
 #| label: tbl-highestcaseshomicidestable
@@ -250,19 +276,21 @@ crime_per_neighbourhood |>
 # Creates table
 crime_per_neighbourhood |>
   filter(homicide_or_shooting == "homicide") |>
-  arrange(desc(num_cases_total_per_neighbourhood_per_crime)) |>
-  select(neighbourhood, hood_id, proportion_of_toronto_pop_in_neighbourhood, num_cases_total_per_neighbourhood_per_crime, num_cases_total_per_neighbourhood_per_crime_proportion) |>
+  arrange(desc(num_cases_total_per_neigh_per_crime)) |>
+  select(neighbourhood, hood_id, prop_of_toronto_pop_in_neigh, num_cases_total_per_neigh_per_crime, num_cases_total_per_neigh_per_crime_prop) |>
   unique() |>
   rename(
-    "Total number of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime,
-    "Proportion of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_per_crime_proportion,
+    "Total number of cases (2018 to 2023)" = num_cases_total_per_neigh_per_crime,
+    "Proportion of cases (2018 to 2023)" = num_cases_total_per_neigh_per_crime_prop,
     "Neighbourhood ID" = hood_id, 
     "Neighbourhood" = neighbourhood, 
-    "Proportion of Population (2023)" = proportion_of_toronto_pop_in_neighbourhood
+    "Proportion of Population (2023)" = prop_of_toronto_pop_in_neigh
   ) |>
   head(6) |>
   kable()
 ```
+
+Based on @tbl-highestcasestable and @fig-highestcaseshistogram, Glenfield-Jane Heights is the neighbourhood with the highest number of homicides and shootings from 2018 to 2023 with 144 cases (5% of all shootings and homicides). Mount Olive-Silverstone-Jamestown has the second highest number of cases with 97 cases (3% of all shootings and homicides). For the rest of four neighbourhoods, Black Creek has 77 cases (3% of shootings and homicides), York University Heights has 70 cases (2% of shootings and homicides), Yorkdale-Glen Park has 64 cases (2% of shootings and homicides), and West Humber-Clairville has 60 cases (2% of shootings and homicides). For all neighbourhoods, the proportion of the people living in each of the neighbourhood is $<1$. 
 
 ```{r}
 #| label: tbl-highestcasestable
@@ -274,21 +302,19 @@ crime_per_neighbourhood |>
 # Creates table
 crime_per_neighbourhood |>
   filter(homicide_or_shooting == "homicide") |>
-  arrange(desc(num_cases_total_per_neighbourhood)) |>
-  select(neighbourhood, hood_id, proportion_of_toronto_pop_in_neighbourhood, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_proportion) |>
+  arrange(desc(num_cases_total_per_neigh)) |>
+  select(neighbourhood, hood_id, prop_of_toronto_pop_in_neigh, num_cases_total_per_neigh, num_cases_total_per_neigh_prop) |>
   unique() |>
   rename(
-    "Total number of cases (2018 to 2023)" = num_cases_total_per_neighbourhood,
-    "Proportion of cases (2018 to 2023)" = num_cases_total_per_neighbourhood_proportion,
+    "Total number of cases (2018 to 2023)" = num_cases_total_per_neigh,
+    "Proportion of cases (2018 to 2023)" = num_cases_total_per_neigh_prop,
     "Neighbourhood ID" = hood_id,
     "Neighbourhood" = neighbourhood, 
-    "Proportion of Population (2023)" = proportion_of_toronto_pop_in_neighbourhood
+    "Proportion of Population (2023)" = prop_of_toronto_pop_in_neigh
   ) |>
   head(6) |>
   kable()
 ```
-
-
 
 ```{r}
 #| label: fig-highestcaseshistogram
@@ -298,12 +324,12 @@ crime_per_neighbourhood |>
 #| message: false
 
 crime_per_neighbourhood |> 
-  select(hood_id, homicide_or_shooting, num_cases_total_per_neighbourhood, num_cases_total_per_neighbourhood_per_crime) |>
-  arrange(desc(num_cases_total_per_neighbourhood)) |>
-  select(-c(num_cases_total_per_neighbourhood)) |>
+  select(hood_id, homicide_or_shooting, num_cases_total_per_neigh, num_cases_total_per_neigh_per_crime) |>
+  arrange(desc(num_cases_total_per_neigh)) |>
+  select(-c(num_cases_total_per_neigh)) |>
   unique() |>
   head(12) |>
-  ggplot(mapping = aes(x = as.character(hood_id), y = num_cases_total_per_neighbourhood_per_crime, fill = homicide_or_shooting)) +
+  ggplot(mapping = aes(x = as.character(hood_id), y = num_cases_total_per_neigh_per_crime, fill = homicide_or_shooting)) +
   geom_bar(stat="identity", position = "dodge2") +
   labs(x = "Neighbourhood ID", y = "Number of Cases", fill = "Type of Crime") +
   theme_minimal() + 
@@ -311,22 +337,35 @@ crime_per_neighbourhood |>
   theme(legend.position = "bottom", plot.title = element_text(size = 9, face = "bold"), legend.title = element_text(size = 9), legend.text = element_text(size = 7))  + scale_fill_brewer(palette = "Paired")
 ```
 
+## Police Facility Locations in relation to the Number of Homicides and Shootings from 2018 to 2023 across Toronto Neighbourhoods
 
-
-## Police Facility Locations in relation to the Number of Homicides and Shootings from 2018 to 2023 in Toronto
+@fig-homicides-map shows that there are a greater density of police locations closer to the downtown area of Toronto. We can see that neighbourhood 73 also known as Moss Park, which had the number of cases of homicides according to @tbl-highestcaseshomicidestable has a police location situated along its border. Mount Olive-Silverstone-Jamestown (neighbourhood 2) has a police station located in the neighbourhood. However with other neighbourhoods with a high number of homicides such as West Humber-Clairville (1), Avondale (153), Glenfield-Jane Heights (25), York University Heights (27), and Eglinton East (138) has no police facilities in their neighbourhoods.
 
 ```{r}
 #| label: fig-homicides-map
-#| fig-cap: Location of police facilities in relation to Toronto neighbourhoods with the highest number of homicides from 2018 to 2023.
+#| fig-cap: Location of police facilities in relation to the number of homicides across Toronto neighbourhoods from 2018 to 2023.
 #| echo: false
 #| warning: false
 #| message: false
+
+homicide_map_data <-
+  cleaned_crime_data |>
+  unique() |>
+  filter(homicide_or_shooting == "homicide") |>
+  # Groups data by type of crime, and neighbourhood
+  group_by(neighbourhood, homicide_or_shooting) |>
+  # Create new columns for number of cases for homicides and shootings per neighbourhood. Also calculate the proportion as well. 
+  mutate (
+    num_cases_total_per_neigh_per_crime = sum(num_of_cases)
+  ) |>
+  ungroup()
+    
 # Reference the following for code:
 # https://cengel.github.io/R-spatial/mapping.html
 ggplot() + 
     # To help convert between GeoJSON to sf  https://cran.r-project.org/web/packages/geojsonsf/vignettes/geojson-sf-conversions.html
   # Fill in area regarding the number of cases 
-  geom_sf(data = cleaned_crime_data |> filter(homicide_or_shooting == "homicide"), aes(fill = num_of_cases, geometry = geometry)) +
+  geom_sf(data = homicide_map_data, aes(fill = num_cases_total_per_neigh_per_crime, geometry = geometry)) +
   # Changes the font of the title and removes the x and y axis 
   # Reference to figured out how to add labels to maps https://tmieno2.github.io/R-as-GIS-for-Economists/create-maps.html
   theme_minimal() + 
@@ -337,56 +376,7 @@ ggplot() +
     fill = "Number of cases"
   ) +
   geom_sf_text(
-    data = cleaned_crime_data |> filter(num_of_cases >= 14),
-    aes(label = hood_id),
-    check_overlap = TRUE,
-    size = 2, 
-    color = "black"
-    ) +
-    theme(plot.title = element_text(size = 9, face = 'bold'), 
-          plot.subtitle = element_text(size = 9),
-          rect = element_blank(), 
-          axis.text.x = element_blank(), 
-          axis.text.y = element_blank(), 
-          axis.title.x = element_blank(), 
-          axis.title.y = element_blank(), 
-          axis.ticks = element_blank(), 
-          legend.title = element_text(size = 8),
-          panel.grid.major = element_blank(),
-          panel.grid.minor = element_blank()
-          ) +
-  # Add in police locations
-  geom_point(data = cleaned_police_location,
-    aes(geometry = geometry, color = "Police Facility"), stat = "sf_coordinates"
-  ) + labs(color = "Location") + scale_color_manual(values = c("Police Facility" = "darkred")) + 
-  scale_fill_gradient(low = 'lightblue', high = 'darkblue')
-  
-```
-
-
-```{r}
-#| label: fig-shootings-map
-#| fig-cap: Location of police facilities in relation to six Toronto neighbourhoods with the highest number of shootings from 2018 to 2023.
-#| echo: false
-#| warning: false
-#| message: false
-# Reference the following for code:
-# https://cengel.github.io/R-spatial/mapping.html
-ggplot() + 
-    # To help convert between GeoJSON to sf  https://cran.r-project.org/web/packages/geojsonsf/vignettes/geojson-sf-conversions.html
-  # Fill in area regarding the number of cases 
-  geom_sf(data = cleaned_crime_data |> filter(homicide_or_shooting == "shooting"), aes(fill = num_of_cases, geometry = geometry)) +
-  # Changes the font of the title and removes the x and y axis 
-  # Reference to figured out how to add labels to maps https://tmieno2.github.io/R-as-GIS-for-Economists/create-maps.html
-  theme_minimal() + 
-  labs(
-    x = "Longitude",
-    y = "Latitude",
-    title = "Number of shootings across Toronto neighbourhoods (2018 to 2023)",
-    fill = "Number of cases"
-  ) +
-  geom_sf_text(
-    data = cleaned_crime_data |> filter(num_of_cases >= 14),
+    data = homicide_map_data,
     aes(label = hood_id),
     check_overlap = TRUE,
     size = 2, 
@@ -406,7 +396,68 @@ ggplot() +
           ) +
   # Add in police locations
   geom_point(data = cleaned_police_location,
-    aes(geometry = geometry, color = "Police Facility"), stat = "sf_coordinates"
+    aes(geometry = geometry, color = "Police Facility"), alpha = 0.90, stat = "sf_coordinates"
+  ) + labs(color = "Location") + scale_color_manual(values = c("Police Facility" = "darkred")) + 
+  scale_fill_gradient(low = 'lightblue', high = 'darkblue')
+  
+```
+Based on @fig-shootings-map, the neighbourhood with the highest number of shootings, Glenfield-Jane Heights (25) has no police facility located in the neighbourhood. However, Mount Olive-Silverstone-Jamestown (2) and Black Creek (24) have police facilities located in their neighbourhoods. For the other three neighbourhoods, York University Heights	(27) and Golfdale-Cedarbrae-Woburn (141) have no police facilities located in the neighbourhood while Yorkdale-Glen Park (31) does.
+
+```{r}
+#| label: fig-shootings-map
+#| fig-cap: Location of police facilities in relation to the number of shootings across Toronto neighbourhoods from 2018 to 2023.
+#| echo: false
+#| warning: false
+#| message: false
+
+shootings_map_data <-
+  cleaned_crime_data |>
+  unique() |>
+  filter(homicide_or_shooting == "shooting") |>
+  # Groups data by type of crime, and neighbourhood
+  group_by(neighbourhood, homicide_or_shooting) |>
+  mutate (
+    num_cases_total_per_neigh_per_crime = sum(num_of_cases)
+  ) |>
+  ungroup()
+
+# Reference the following for code:
+# https://cengel.github.io/R-spatial/mapping.html
+ggplot() + 
+    # To help convert between GeoJSON to sf  https://cran.r-project.org/web/packages/geojsonsf/vignettes/geojson-sf-conversions.html
+  # Fill in area regarding the number of cases 
+  geom_sf(data = shootings_map_data, aes(fill = num_cases_total_per_neigh_per_crime, geometry = geometry)) +
+  # Changes the font of the title and removes the x and y axis 
+  # Reference to figured out how to add labels to maps https://tmieno2.github.io/R-as-GIS-for-Economists/create-maps.html
+  theme_minimal() + 
+  labs(
+    x = "Longitude",
+    y = "Latitude",
+    title = "Number of shootings across Toronto neighbourhoods (2018 to 2023)",
+    fill = "Number of cases"
+  ) +
+  geom_sf_text(
+    data = shootings_map_data,
+    aes(label = hood_id),
+    check_overlap = TRUE,
+    size = 2, 
+    color = "white"
+    ) +
+    theme(plot.title = element_text(size = 9, face = 'bold'), 
+          plot.subtitle = element_text(size = 9),
+          rect = element_blank(), 
+          axis.text.x = element_blank(), 
+          axis.text.y = element_blank(), 
+          axis.title.x = element_blank(), 
+          axis.title.y = element_blank(), 
+          axis.ticks = element_blank(), 
+          legend.title = element_text(size = 8),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank()
+          ) +
+  # Add in police locations
+  geom_point(data = cleaned_police_location,
+    aes(geometry = geometry, color = "Police Facility"), alpha = 0.90, stat = "sf_coordinates"
   ) + labs(color = "Location") + scale_color_manual(values = c("Police Facility" = "darkred")) + 
   scale_fill_gradient(low = 'lightblue', high = 'darkblue')
   
@@ -444,29 +495,6 @@ To reproduce the results in the paper, first run the scripts found in the script
 
 ## Code styling 
 Code written in the scripts was checked and styled with lintr [@citelintr] and styler [@citestyler]. 
-
-## Additional Figures 
-
-
-## Additional Tables 
-```{r}
-#| label: tbl-wardprofile
-#| tbl-cap:  Average total income of households in 2020 across the 25 wards of Toronto.
-#| echo: false
-#| warning: false
-#| message: false
-
-# Creates table
-cleaned_ward_data |>
-  rename(
-    "Ward Number" = ward_num,
-    "Ward Name" = ward_name,
-    "Average total income of households in 2020 ($)" = avg_income
-  ) |>
-  kable()
-```
-
-
 
 \newpage
 
