@@ -1,7 +1,6 @@
 #### Preamble ####
 # Purpose: Downloads and saves the data from Open Data Toronto on the location
-# of police facilities, neighbourhood crime rates, and the profiles of
-# Toronto's 25 wards.
+# of police facilities and neighbourhood crime rates.
 # Author: Emily Su
 # Date: 21 September 2024
 # Contact: em.su@mail.utoronto.ca
@@ -12,8 +11,6 @@
 # NOTE: This script was checked through lintr for styling
 
 # Datasets to be downloaded and saved
-# Ward Profiles (25-Ward Model):
-# - https://open.toronto.ca/dataset/ward-profiles-25-ward-model/
 # Police Facility Location
 # - https://open.toronto.ca/dataset/police-facility-locations/
 # Neighbourhood Crime Rates
@@ -43,13 +40,7 @@ crime_rates <- download_geojson("neighbourhood-crime-rates")
 # Download "Police Facility Locations" Dataset
 police_location <- download_geojson("9aeefa17-27e8-4dd9-b74d-80f7f9eb85ac")
 
-# Download "Ward Profiles (25-Ward Model)"
-ward_profiles <-
-  filter(list_package_resources("6678e1a6-d25f-4dff-b2b7-aa8f042bc2eb"),
-         row_number() == 1) |> get_resource()
 
 #### Save data ####
 write_sf(crime_rates, "data/raw_data/raw_crime_rates.geojson")
 write_sf(police_location, "data/raw_data/raw_police_location.geojson")
-write_csv(as.data.frame(ward_profiles[1]),
-          "data/raw_data/raw_ward_profiles.csv")

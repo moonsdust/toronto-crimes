@@ -1,6 +1,6 @@
 #### Preamble ####
-# Purpose: Tests cleaned datasets about crimes, police locations,
-# and ward data.
+# Purpose: Tests cleaned datasets about crimes
+# and police locations data.
 # Author: Emily Su
 # Date: 26 September 2024
 # Contact: em.su@mail.utoronto.ca
@@ -16,8 +16,6 @@ library(geojsonsf)
 library(dplyr)
 
 #### Read in data ####
-cleaned_ward_data <-
-  read_csv("data/analysis_data/cleaned_ward_data.csv", show_col_types = FALSE)
 cleaned_crime_data <-
   geojson_sf("data/analysis_data/cleaned_crime_data.geojson")
 cleaned_police_location <-
@@ -55,13 +53,3 @@ class(cleaned_crime_data$population_2023) == "numeric"
 # Police location dataset: Data Validation / Tests
 # Check the classes
 class(cleaned_police_location$facility) == "character"
-
-# cleaned_ward_data: Data Validation / Tests
-# 1. Check if that are ward numbers from 1 to 25
-cleaned_ward_data$ward_num |> unique() %in% c(1:25)
-# 2. Check that average income is equal to or greater than 0
-cleaned_ward_data$avg_income |> min() >= 0
-# 3. Check classes
-class(cleaned_ward_data$ward_num) == "numeric"
-class(cleaned_ward_data$ward_name) == "character"
-class(cleaned_ward_data$avg_income) == "numeric"

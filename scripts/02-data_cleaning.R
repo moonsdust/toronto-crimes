@@ -1,5 +1,5 @@
 #### Preamble ####
-# Purpose: Cleans the unedited ward profile data, unedited police location
+# Purpose: Cleans the unedited police location
 # data, and unedited data on neighbourhood crime rates.
 # Author: Emily Su
 # Date: 21 September 2024
@@ -18,75 +18,12 @@ library(geojsonsf)
 library(sf)
 
 #### Clean data ####
-raw_ward_profiles_data <-
-  read_csv("data/raw_data/raw_ward_profiles.csv", show_col_types = FALSE)
 raw_crime_rates_data <-
   geojson_sf("data/raw_data/raw_crime_rates.geojson")
 raw_police_location_data <-
   geojson_sf("data/raw_data/raw_police_location.geojson")
 
-# Dataset 1 (Ward Profiles Dataset)
-# Expected columns: ward_num | ward_name | avg_income
-# Clean column names
-cleaned_ward_data <- raw_ward_profiles_data |> clean_names()
-
-# Get row that contains the average household income
-cleaned_ward_data <-
-  cleaned_ward_data |>
-  filter(x2021_one_variable_city_of_toronto_profiles ==
-           "Average total income of households in 2020 ($)")
-# Convert row to a column
-cleaned_ward_data <-
-  cleaned_ward_data |>
-  # Code snippet to convert to a 1-column matrix and then to a vector
-  # was adapted from the following:
-  # https://www.geeksforgeeks.org/convert-matrix-to-vector-in-r/
-  t() |> # Convert 1-row matrix into a 1-column matrix
-  c() |> # Convert to a vector
-  tibble() |> # Change into a tibble
-  slice(-1) |> # Remove the first row
-  slice(-1) |>
-  rename( # Left side is the new name and the right side is the old name
-    avg_income = "c(t(cleaned_ward_data))"
-  ) |>
-  mutate(
-    ward_num = c(1:25),
-    ward_name = c("Etobicoke North",
-                  "Etobicoke Centre",
-                  "Etobicoke-Lakeshore",
-                  "Parkdale-High Park",
-                  "York South-Weston",
-                  "York Centre",
-                  "Humber River-Black Creek",
-                  "Eglinton-Lawrence",
-                  "Davenport",
-                  "Spadina-Fort York",
-                  "University-Rosedale",
-                  "Toronto-St. Paul’s",
-                  "Toronto Centre",
-                  "Toronto-Danforth",
-                  "Don Valley West",
-                  "Don Valley East",
-                  "Don Valley North",
-                  "Willowdale",
-                  "Beaches-East York",
-                  "Scarborough Southwest",
-                  "Scarborough Centre",
-                  "Scarborough-Agincourt",
-                  "Scarborough North",
-                  "Scarborough-Guildwood",
-                  "Scarborough-Rouge Park")
-  )
-
-# Convert columns from character to numeric
-cleaned_ward_data$avg_income <- as.numeric(cleaned_ward_data$avg_income)
-
-# Switch order of columns
-cleaned_ward_data <-
-  cleaned_ward_data |>
-  select(ward_num, ward_name, avg_income)
-
-# Dataset 2 (Crime rates dataset)
+# Dataset 1 (Crime rates dataset)
 # Expected columns: year | neighbourhood | hood_id | population_2023
 # more columns | homicide_or_shooting | num_of_cases | geometry
 
@@ -205,7 +142,7 @@ cleaned_crime_data <-
   ) |>
   unique()
 
-# Dataset 3
+# Dataset 2
 # Expected Columns: facility | geometry
 # Clean column names
 cleaned_police_location <- raw_police_location_data |> clean_names()
@@ -217,8 +154,6 @@ cleaned_police_location <-
 #### Save data ####
 # Save crime data as a geojson
 write_sf(cleaned_crime_data, "data/analysis_data/cleaned_crime_data.geojson")
-# Save ward profile data as a csv
-write_csv(cleaned_ward_data, "data/analysis_data/cleaned_ward_data.csv")
 # Save police location data as a geojson
 write_sf(cleaned_police_location,
          "data/analysis_data/cleaned_police_location.geojson")
