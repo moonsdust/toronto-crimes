@@ -1,11 +1,11 @@
 ---
-title: "Toronto Homicides and Shootings (To be Changed)"
+title: "High Number of Shootings and Homicides but Fewer Police Stations Around in Toronto Neighbourhoods"
 subtitle: "An analysis of police presence across Toronto neighbourhoods in relation to homicide and shooting cases (2018-2023)"
 author: Emily Su
 thanks: "Code and data are available at: https://github.com/moonsdust/toronto-homicides-shootings."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "Despite optimism in 2023 about gun violence continuing to decrease annually in Toronto, there was a sudden increase in gun violence at the beginning of 2024. This paper looks at patterns of where shootings and homicides occurred across all Toronto neighbourhoods alongside the location of police stations from 2018 to 2023. The results showed that the six neighbourhoods with the highest cases of shootings and homicides had below-average household income and smaller populations and there are fewer police stations around neighbourhoods with high numbers of shootings and homicides. These findings can inform where future police facilities can be built to ensure the safety of Toronto neighbourhoods, but further investigation is needed on how adding police facilities can impact crime cases in surrounding neighbourhoods over time."
 format:
   pdf:
     toc: true
@@ -38,21 +38,13 @@ cleaned_police_location <- geojson_sf('../data/analysis_data/cleaned_police_loca
 cleaned_crime_data <- geojson_sf('../data/analysis_data/cleaned_crime_data.geojson') |> unique()
 ```
 
-
 # Introduction
 
-The introduction is self-contained and tells a reader everything they need to know including: 1) broader context to motivate (done); 2) some detail about what the paper is about (done); 3) a clear gap that needs to be filled (done); 4) what was done; 5) what was found; 6) why it is important; 7) the structure of the paper (done). A reader should be able to read only the introduction and know what was done, why, and what was found. Likely 3 or 4 paragraphs, or 10 per cent of total.
+As a response to the increase in gun violence in 2024 by 74% from 2023, the Toronto Police Services announced on June 27 2024, at a press conference that they will increase their presence in areas impacted by high levels of gun violence [@citeincreasepolicetoronto]. This concern was expressed because, in a CBC article published in December 2023, they mentioned that there was a decrease in gun violence from 2019 to 2023 across Toronto [@citedropgunviolence]. Deputy Chief Rob Johnson in the same conference also raised concerns about the increasing number of youth being perpetrators of gun violence [@citeyouthgunviolence]. This raises the following questions: Which Toronto neighbourhoods are most impacted by shootings and homicides from 2018 to 2023? Where are police stations located relative to the shootings and homicides across Toronto? According to Statistics Canada, the most frequently used method to commit homicides is through shooting and in our analysis, we chose to analyze homicides alongside shootings [@citestatcan]. 
 
-As a response to the increase in gun violence in 2024 by 74% from 2023, the Toronto Police Services announced on June 27, 2024 at a press conference that they will increase their presence in areas impacted by high levels of gun violence [@citeincreasepolicetoronto]. This concern was expressed because in a CBC article published in December 2023, they mentioned that there was a decrease in gun violence from 2019 to 2023 across Toronto [@citedropgunviolence]. Deputy Chief Rob Johnson in the same conference also raised concerns on the increasing number of youth being perpetrators of gun violence [@citeyouthgunviolence]. This raises the following questions: Which Toronto neighbourhoods are most impacted by shootings and homicides from 2018 to 2023? Where are police stations located relative to the shootings and homicides across Toronto? According to Statistics Canada, the most frequently used method to commit homicides is through shooting and so in our analysis we chose to analyze homicides alongside shootings [@citestatcan]. 
+In this paper, we analyzed data provided by Toronto Police Services and City Planning to investigate patterns where shootings and homicides take place and where police stations are located relative to where the crimes occur. Currently, there is news coverage about increasing police visibility in areas with high gun violence but it is not known if the location of police stations in Toronto does impact the number of shootings and homicides that have taken place. In our findings, our data showed that neighbourhoods with below-average household incomes and smaller populations have one of the highest numbers of shootings and homicides. Alongside this, we found that police stations were commonly not located in clusters of neighbourhoods with high numbers of shootings and homicides. These findings can inform police divisions of neighbourhoods to be more present at based on how many cases has occurred in a neighbourhood and figure out where to develop future police facilities. 
 
-In this paper, we analyzed data provided by Toronto Police Services and City Planning to investigate patterns where shootings and homicides take place and where police stations are located relative to where the crimes occur. Currently there is news coverage about increasing police visibility in areas with high gun violence but it is not known if the location of police stations in Toronto does impact the number of shootings and homicides that have taken place. 
-
-In our findings,.....
-
-Our findings can also inform police divisions of neighbourhoods to be more present at based on how many cases has occurred in a neighbourhood. 
-
-
-For the rest of the paper, the data section [@sec-data] will describe the datasets used and they were retrieved, our variables of interest used in our graphs and tables, and briefly about any variables that were constructed and the data cleaning process. In the results section [@sec-results], it will describe and show graphs and tables created based on our datasets and in the discussion section [@sec-discussion], it will provide an overview of what we did in our results, explain the meaning of our results and the implications it has on the real world, and provide potential areas of improvements of the paper and suggestions of future works. 
+For the rest of the paper, the data section [@sec-data] will describe the datasets used and how they were retrieved, our variables of interest used in our graphs and tables, and briefly about any variables that were constructed and the data cleaning process. The results section [@sec-results] will describe and show graphs and tables created based on our datasets and the discussion section [@sec-discussion] will provide an overview of what we did in our results, explain the meaning of our results and the implications it has on the real world, and provide potential areas of improvements of the paper and suggestions of future works. 
 
 # Data {#sec-data}
 ## Methodology
@@ -245,7 +237,7 @@ yearly_crime |>
 
 ## Six Toronto Neighbourhoods with the Highest Cases of Homicides and Shootings from 2018 to 2023
 
-@tbl-highestcasesshootingstable shows that Glenfield-Jane Heights has the highest number of shootings from 2018 to 2023 with 133 cases (4% of all shootings and homicides from 2018 to 2023) out of the 6 Toronto neighbourhoods with the highest number of shootings. Following this, Mount Olive-Silverstone-Jamestown has second highest number of shootings with 82 cases (3% of all shootings and homicides from 2018 to 2023). For the rest in descending order, Black Creek has 69 cases (2% of all shootings and homicides), York University Heights has 59 cases (2% of all shootings and homicides), Yorkdale-Glen Park has 58 cases (2% of all shootings and homicides), and Golfdale-Cedarbrae-Woburn has 54 cases (2% of all shootings and homicides). 
+@tbl-highestcasesshootingstable shows that Glenfield-Jane Heights has the highest number of shootings from 2018 to 2023 with 133 cases (4% of all shootings and homicides from 2018 to 2023) out of the 6 Toronto neighbourhoods with the highest number of shootings. Following this, Mount Olive-Silverstone-Jamestown has the second highest number of shootings with 82 cases (3% of all shootings and homicides from 2018 to 2023). For the rest in descending order, Black Creek has 69 cases (2% of all shootings and homicides), York University Heights has 59 cases (2% of all shootings and homicides), Yorkdale-Glen Park has 58 cases (2% of all shootings and homicides), and Golfdale-Cedarbrae-Woburn has 54 cases (2% of all shootings and homicides). 
 
 @tbl-highestcaseshomicidestable indicates that Moss Park has the highest number of homicides from 2018 to 2023 with 20 cases (1% of all shootings and homicides). Mount Olive-Silverstone-Jamestown is not only in second for the highest number of shootings but also for homicides with 15 cases from 2018 to 2023 (1% of all shootings and homicides). For the other four neighbourhoods, Avondale has 13 cases ($<1%$ of all shootings and homicides), Glenfield-Jane Heights and York University Heights both have 11 cases ($<1%$ of all shootings and homicides), and Eglinton East	has 10 cases ($<1%$ of all shootings and homicides). 
 
@@ -347,7 +339,7 @@ crime_per_neighbourhood |>
 
 ## Police Facility Locations in relation to the Number of Homicides and Shootings from 2018 to 2023 across Toronto Neighbourhoods
 
-@fig-homicides-map shows that there are a greater density of police locations closer to the downtown area of Toronto. We can see that neighbourhood 73 also known as Moss Park, which had the number of cases of homicides according to @tbl-highestcaseshomicidestable has a police location situated along its border. Mount Olive-Silverstone-Jamestown (neighbourhood 2) has a police station located in the neighbourhood. However with other neighbourhoods with a high number of homicides such as West Humber-Clairville (1), Avondale (153), Glenfield-Jane Heights (25), York University Heights (27), and Eglinton East (138) has no police facilities in their neighbourhoods.
+@fig-homicides-map shows that there are a greater density of police locations closer to the downtown area of Toronto. We can see that neighbourhood 73 also known as Moss Park, which had the number of cases of homicides according to @tbl-highestcaseshomicidestable has a police location situated along its border. Mount Olive-Silverstone-Jamestown (neighbourhood 2) has a police station located in the neighbourhood. However with other neighbourhoods with a high number of homicides such as West Humber-Clairville (1), Avondale (153), Glenfield-Jane Heights (25), York University Heights (27), and Eglinton East (138) has no police facilities in their neighbourhoods. @fig-homicides-map also shows that neighbourhoods in eastern, southern, and northwest Toronto have clusters with high numbers of homicides. 
 
 ```{r}
 #| label: fig-homicides-map
@@ -409,7 +401,7 @@ ggplot() +
   scale_fill_gradient(low = 'lightblue', high = 'darkblue')
   
 ```
-Based on @fig-shootings-map, the neighbourhood with the highest number of shootings, Glenfield-Jane Heights (25) has no police facility located in the neighbourhood. However, Mount Olive-Silverstone-Jamestown (2) and Black Creek (24) have police facilities located in their neighbourhoods. For the other three neighbourhoods, York University Heights	(27) and Golfdale-Cedarbrae-Woburn (141) have no police facilities located in the neighbourhood while Yorkdale-Glen Park (31) does.
+Based on @fig-shootings-map, the neighbourhood with the highest number of shootings, Glenfield-Jane Heights (25) has no police facility located in the neighbourhood. However, Mount Olive-Silverstone-Jamestown (2) and Black Creek (24) have police facilities located in their neighbourhoods. For the other three neighbourhoods, York University Heights	(27) and Golfdale-Cedarbrae-Woburn (141) have no police facilities located in the neighbourhood while Yorkdale-Glen Park (31) does. The neighbourhoods with the most number of shootings appears to be located in eastern and northern Toronto but there are fewer police stations located there compared to southern Toronto.
 
 ```{r}
 #| label: fig-shootings-map
@@ -472,35 +464,22 @@ ggplot() +
 ```
 
 # Discussion {#sec-discussion}
-In @sec-results, we focused on cases from 2018 to 2023 and looked at the number of homicides and shootings yearly and the six Toronto neighbourhoods that had the highest number of homicides and shootings using tables and graphs. Finally, we mapped where police facilities are located in Toronto alongside the number of homicides and shootings for each neighbourhood.  
+In @sec-results, we focused on cases from 2018 to 2023 and looked at the number of homicides and shootings yearly and the six Toronto neighbourhoods that had the highest number of homicides and shootings using tables and graphs. Finally, we mapped where police facilities are located in Toronto alongside the number of homicides and shootings for each neighbourhood. We saw that the yearly number of shootings was consistent with reports [@citedropgunviolence] indicating that gun violence was decreasing prior to 2024.
 
-## First discussion point {#sec-first-point}
+## Neighbourhoods with below average household incomes and smaller populations have the highest number of shootings and homicides
+@citewealthinequalities states that the average household income after-tax in 2020 for Toronto neighbourhoods is \$96000. Using our result [@tbl-highestcasestable] and further research from @citefindyourneighbourhood indicates that the six neighbourhoods with the highest number of shootings and homicides have below average household incomes after tax. Glenfield-Jane Heights, the neighbourhood with the highest number of cases, have an average after-tax household income in 2020 with \$76300 [@citefindyourneighbourhood]. Mount Olive-Silverstone-Jamestown has an average household income of \$78200 while Black Creek has an average household income of \$68300 [@citefindyourneighbourhood]. For the rest of the neighbourhoods, residents in York University Heights	make an average household income of \$77400 after tax while it is $81800 for Yorkdale-Glen Park residents and \$92300 for West Humber-Clairville [@citefindyourneighbourhood]. From @tbl-highestcasestable, we also found that all neighbourhoods with high number of shootings and homicides have population sizes that made up less than 1% of Toronto's total population. 
 
-Neighbourhoods with the highest number of shootings and homicides 
-- Glenfield-Jane Heights
-- Mount Olive-Silverstone-Jamestown	
-- Black Creek	
-- York University Heights	
-- Yorkdale-Glen Park
-- West Humber-Clairville	
+## Police stations commonly not found in neighbourhoods with high number of shootings and homicides
 
+@fig-homicides-map and @fig-shootings-map showed that neighbourhoods with high number of shootings or homicides commonly did not have a police station located in them. However, there are some neighbourhoods with police stations located in the neighbourhood but still had a high number of cases. This indicates that having police stations located in the neighbourhood does not necessarily mean there is less crime cases in the specific neighbourhood. Although we found that clusters of neighbourhoods with higher number of cases had fewer police stations relative to the size of the cluster. In a study done by the National Bureau of Economic Research, they found that having more police presence in city can decrease the number of high-level crimes like homicides but this means more low-level crime arrests and traffic stops, which can hurt neighbourhoods with larger populations of marginalized individuals [@citemcgilldaily].
 
-https://www.npr.org/sections/money/2021/04/20/988769793/when-you-add-more-police-to-a-city-what-happens
+## Areas of improvement 
 
-https://www.mcgilldaily.com/2023/02/more-policing-does-not-address-the-rise-of-violent-crime-in-canada/#:~:text=The%20NBER%20research%20found%20that,deeply%20harmful%20to%20marginalized%20communities
-
-
-## Second discussion point
-
-## Third discussion point
-
-## Areas of improvement
-
-We faced several limitations while conducting our analysis. We do not have information about when police facility were opened.  
-
-
+We faced several limitations while conducting our analysis. The datasets might not be completely accurate as human errors can occur when an entry is entered in the datasets. In the "Neighbourhood Crime Rates" dataset, the population is an approximation of the residents living in a neighbourhood at a certain point of time and does not consider commuters in the neighbourhoods. Also, the "Neighbourhood Crime Rates" dataset does not indicate if the shooting and/or homicide occurred along the borders of neighbourhoods and so the neighbourhood the case happened at is approximated. In the dataset we obtained on Toronto police facilities, it does not have information about which years each police facility were opened. This limited our analysis of police presence in relation to neighbourhood shootings and homicides. 
 
 ## Next steps
+Results from our analysis can be used to inform decisions on where police divisions could increase their presence. Further investigations can look into how the appearance of police facilities impact the cases of shootings and/or homicides the neighbourhoods it is around over time. Another investigation can also look into the demographics of the neighbourhoods with high number of shootings and homicides. 
+
 
 \newpage
 
