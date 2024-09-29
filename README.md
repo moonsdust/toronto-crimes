@@ -1,10 +1,10 @@
-# Toronto Crimes (To Be Changed)
+# High Number of Shootings and Homicides but Fewer Police Stations Around in Toronto Neighbourhoods
 
 ## Overview
-
+Despite optimism in 2023 about gun violence continuing to decrease annually in Toronto, there was a sudden increase in gun violence at the beginning of 2024. This paper looks at patterns of where shootings and homicides occurred across all Toronto neighbourhoods alongside the location of police stations from 2018 to 2023. The results showed that the six neighbourhoods with the highest cases of shootings and homicides had below-average household income and smaller populations and there are fewer police stations around neighbourhoods with high numbers of shootings and homicides. These findings can inform where future police facilities can be built to ensure the safety of Toronto neighbourhoods, but further investigation is needed on how adding police facilities can impact crime cases in surrounding neighbourhoods over time.
 
 ## Important Notes
-- Due to the formatting of the `geometry` columns for the "Police Facility Location" and "Neighbourhood Crime Rates" datasets, they were downloaded as geojson files instead of CSV files. 
+- Due to the formatting of the `geometry` columns for the "Police Facility Location" and "Neighbourhood Crime Rates" datasets, they were downloaded as geojson files instead of CSV files.
 
 ## File Structure
 
