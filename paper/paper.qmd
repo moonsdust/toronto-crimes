@@ -41,10 +41,18 @@ cleaned_crime_data <- geojson_sf('../data/analysis_data/cleaned_crime_data.geojs
 
 # Introduction
 
+The introduction is self-contained and tells a reader everything they need to know including: 1) broader context to motivate (done); 2) some detail about what the paper is about (done); 3) a clear gap that needs to be filled (done); 4) what was done; 5) what was found; 6) why it is important; 7) the structure of the paper (done). A reader should be able to read only the introduction and know what was done, why, and what was found. Likely 3 or 4 paragraphs, or 10 per cent of total.
 
-The remainder of this paper is structured as follows. @sec-data....
+As a response to the increase in gun violence in 2024 by 74% from 2023, the Toronto Police Services announced on June 27, 2024 at a press conference that they will increase their presence in areas impacted by high levels of gun violence [@citeincreasepolicetoronto]. This concern was expressed because in a CBC article published in December 2023, they mentioned that there was a decrease in gun violence from 2019 to 2023 across Toronto [@citedropgunviolence]. Deputy Chief Rob Johnson in the same conference also raised concerns on the increasing number of youth being perpetrators of gun violence [@citeyouthgunviolence]. This raises the following questions: Which Toronto neighbourhoods are most impacted by shootings and homicides from 2018 to 2023? Where are police stations located relative to the shootings and homicides across Toronto? According to Statistics Canada, the most frequently used method to commit homicides is through shooting and so in our analysis we chose to analyze homicides alongside shootings [@citestatcan]. 
+
+In this paper, we analyzed data provided by Toronto Police Services and City Planning to investigate patterns where shootings and homicides take place and where police stations are located relative to where the crimes occur. Currently there is news coverage about increasing police visibility in areas with high gun violence but it is not known if the location of police stations in Toronto does impact the number of shootings and homicides that have taken place. 
+
+In our findings,.....
+
+Our findings can also inform police divisions of neighbourhoods to be more present at based on how many cases has occurred in a neighbourhood. 
 
 
+For the rest of the paper, the data section [@sec-data] will describe the datasets used and they were retrieved, our variables of interest used in our graphs and tables, and briefly about any variables that were constructed and the data cleaning process. In the results section [@sec-results], it will describe and show graphs and tables created based on our datasets and in the discussion section [@sec-discussion], it will provide an overview of what we did in our results, explain the meaning of our results and the implications it has on the real world, and provide potential areas of improvements of the paper and suggestions of future works. 
 
 # Data {#sec-data}
 ## Methodology
@@ -55,9 +63,9 @@ using the R programming language [@citeR], tidyverse [@citetidyverse], opendatat
 The data used for the analysis comes from the "cleaned_crime_data" and "cleaned_police_location" datasets. The datasets was constructed by calling the opendatatoronto package [@citeopendatatoronto], which accesses and download data from the City of Toronto's Open Data Portal. The latest versions of the datasets was scraped on September 24, 2024 at 10:28 pm EDT. We also removed duplicate observations from the original dataset that comes from reading in GeoJSON files for the datasets. Other datasets we considered scraping includes the "Neighbourhoods" dataset to obtain neighbourhood boundaries for the maps but further testing showed that these boundaries were provided by the "cleaned_crime_data" dataset. 
 
 ### Neighbourhood Crime Rates Dataset
-The "cleaned_crime_data" dataset was retrieved from the "Neighbourhood Crime Rates" dataset and the last time the dataset was updated on the Open Data Portal was on January 11, 2024. This dataset comprised of crime data by neighbourhood that included the number of cases of assault, robbery, homicide, shootings, auto theft, break and enter, and theft over. The original dataset was published by the Toronto Police Services collected from 2014 to 2023, inclusive and is updated annually. For the cleaned dataset, we decided to filter for homicides and shootings and focus on the cases from 2018 to 2023, inclusive. The 2023 population projection in the dataset was provided by Environics Analytics where they counted only the residents in the neighbourhood [@citeneighbourhoodcrimerates]. 
+The "cleaned_crime_data" dataset was retrieved from the "Neighbourhood Crime Rates" dataset and the last time the dataset was updated on the Open Data Portal was on January 11, 2024. This dataset comprised of crime data by neighbourhood that included the number of cases of assault, robbery, homicide, shootings, auto theft, break and enter, and theft over. The original dataset was published by the Toronto Police Services collected from 2014 to 2023, inclusive and is updated annually. For the cleaned dataset, we decided to filter for homicides and shootings and focus on the cases from 2018 to 2023, inclusive. The 2023 population projection in the dataset was provided by Environics Analytics where they only included the number of residents in the neighbourhood [@citeneighbourhoodcrimerates]. 
 
-Each observation in the dataset represent one of Toronto's 158 neighbourhoods and its shootings and homicides from the years 2018 to 2023, inclusive that was recorded by the Toronto Police Services. There are 1896 unique observations in total in the dataset. 
+Each observation in the dataset represent one of Toronto's 158 neighbourhoods and its shootings and homicides from the years 2018 to 2023, inclusive that was recorded by the Toronto Police Services as crimes occur in Toronto. The original dataset is updated annually by the Toronto Police Services in January of the following year. There are 1896 unique observations in total in the dataset. 
 
 Looking at @tbl-dataset-crime-preview, year represents the year the number of homicides and shootings takes place in the neighbourhood and num_of_cases and homicide_or_shooting were constructed based on the columns representing homicide and shootings in the original dataset. homicide_or_shooting indicates what the current crime in the neighbourhood the observation is describing and the num_of_cases indicates the number of cases for the crime indicated by homicide_or_shooting. hood_id is a number between 1 to 174 that represents the ID for the neighbourhood with some neighbourhoods having more than 1 ID. The neighbourhood column contains the name of the neighbourhood. 
 
@@ -157,7 +165,7 @@ yearly_crime <-
   arrange(desc(yearly_num_cases_total)) |>
   ungroup()
 ```
-## Number of Homicide and Shooting Cases in Toronto from 2018 to 2023 in Toronto
+## Number of Homicides and Shootings in Toronto from 2018 to 2023 in Toronto
 
 Looking at @tbl-totalcasestable and @fig-totalcaseshistogram, we can see that the number of shootings across all Toronto neighbourhoods increased from 427 cases in 2018 to 492 cases in 2019. In 2020, the number of shootings decreased to 462 and it decreased the following years for 2021 with 409 shootings, for 2022 with 380 shootings, and for 2023 with 342 shootings. For homicides, there were 98 cases in 2018, 79 cases in 2019, and 71 cases in 2020. There was an increase in homicides in 2021 to 85 cases and decreases in homicides in 2022 and 2023 to 71 and 72 cases, respectively.
 ```{r}
@@ -464,10 +472,23 @@ ggplot() +
 ```
 
 # Discussion {#sec-discussion}
+In @sec-results, we focused on cases from 2018 to 2023 and looked at the number of homicides and shootings yearly and the six Toronto neighbourhoods that had the highest number of homicides and shootings using tables and graphs. Finally, we mapped where police facilities are located in Toronto alongside the number of homicides and shootings for each neighbourhood.  
 
 ## First discussion point {#sec-first-point}
 
-If my paper were 10 pages, then should be be at least 2.5 pages. The discussion is a chance to show off what you know and what you learnt from all this. 
+Neighbourhoods with the highest number of shootings and homicides 
+- Glenfield-Jane Heights
+- Mount Olive-Silverstone-Jamestown	
+- Black Creek	
+- York University Heights	
+- Yorkdale-Glen Park
+- West Humber-Clairville	
+
+
+https://www.npr.org/sections/money/2021/04/20/988769793/when-you-add-more-police-to-a-city-what-happens
+
+https://www.mcgilldaily.com/2023/02/more-policing-does-not-address-the-rise-of-violent-crime-in-canada/#:~:text=The%20NBER%20research%20found%20that,deeply%20harmful%20to%20marginalized%20communities
+
 
 ## Second discussion point
 
@@ -475,7 +496,9 @@ If my paper were 10 pages, then should be be at least 2.5 pages. The discussion 
 
 ## Areas of improvement
 
-Weaknesses and next steps should also be included.
+We faced several limitations while conducting our analysis. We do not have information about when police facility were opened.  
+
+
 
 ## Next steps
 
@@ -483,7 +506,7 @@ Weaknesses and next steps should also be included.
 
 \appendix
 
-# Appendix {-}
+# Appendix {#sec-appendix}
 
 
 ## Acknowledgments 
